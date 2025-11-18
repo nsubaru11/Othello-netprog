@@ -9,10 +9,10 @@ public class OthelloGUI extends JFrame {
 	private static final Color backgroundColor = new Color(34, 139, 34);
 
 	static {
-		whiteImage = new ImageIcon(Objects.requireNonNull(OthelloGUI.class.getResource("/Assets/White.jpg"))).getImage();
-		blackImage = new ImageIcon(Objects.requireNonNull(OthelloGUI.class.getResource("/Assets/Black.jpg"))).getImage();
-		greenFrameImage = new ImageIcon(Objects.requireNonNull(OthelloGUI.class.getResource("/Assets/GreenFrame.jpg"))).getImage();
-		iconImage = new ImageIcon(Objects.requireNonNull(OthelloGUI.class.getResource("/Assets/Icon.png"))).getImage();
+		whiteImage = new ImageIcon(Objects.requireNonNull(OthelloGUI.class.getResource("/Assets/white.jpg"))).getImage();
+		blackImage = new ImageIcon(Objects.requireNonNull(OthelloGUI.class.getResource("/Assets/black.jpg"))).getImage();
+		greenFrameImage = new ImageIcon(Objects.requireNonNull(OthelloGUI.class.getResource("/Assets/greenFrame.jpg"))).getImage();
+		iconImage = new ImageIcon(Objects.requireNonNull(OthelloGUI.class.getResource("/Assets/icon.png"))).getImage();
 	}
 
 	private final CardLayout cardLayout;
