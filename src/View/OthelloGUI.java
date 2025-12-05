@@ -24,14 +24,14 @@ public class OthelloGUI extends JFrame {
 		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 		double size = Math.min(screenSize.getWidth(), screenSize.getHeight());
 		screenSize.setSize(size * 0.6, size * 0.8);
-		setSize(screenSize);
 
 		setTitle("Othello");
 		setIconImage(iconImage);
 		setBackground(backgroundColor);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setLocationRelativeTo(null);
-		setResizable(true);
+		setSize(screenSize);
+		setResizable(false);
 
 		cardLayout = new CardLayout();
 		cardPanel = new JPanel(cardLayout);
