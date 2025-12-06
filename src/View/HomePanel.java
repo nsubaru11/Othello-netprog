@@ -89,7 +89,7 @@ class HomePanel extends JPanel {
 		// startボタンの配置
 		startButton = new JButton();
 		initButton(startButton, startIconNormal, startIconPressed, buttonSize);
-		startButton.addActionListener(e -> gui.showGame());
+		startButton.addActionListener(e -> gui.showMatchingPanel());
 		gbc.insets = new Insets(200, 10, 10, 200);
 		gbc.gridx = 2;
 		gbc.gridy = 0;

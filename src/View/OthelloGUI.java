@@ -1,5 +1,7 @@
 package View;
 
+import Controller.*;
+
 import javax.imageio.*;
 import javax.swing.*;
 import java.awt.*;
@@ -39,6 +41,8 @@ public class OthelloGUI extends JFrame {
 	private static final String CARD_HOME = "home";
 	/** ゲーム画面の識別子 */
 	private static final String CARD_GAME = "game";
+	/** 結果画面の識別子 */
+	private static final String CARD_RESULT = "result";
 
 	// --------------- フィールド ---------------
 	/** 画面切り替えレイアウトマネージャ */
@@ -51,6 +55,12 @@ public class OthelloGUI extends JFrame {
 	private final HomePanel homePanel;
 	/** ゲーム画面パネル */
 	private final GamePanel gamePanel;
+	/** 結果画面パネル */
+	private final ResultPanel resultPanel;
+	/** マッチング設定パネル */
+	private final MatchingPanel matchingPanel;
+	/** ゲームコントローラー */
+	private GameController controller;
 
 	/**
 	 * OthelloGUIを構築し、メインウィンドウを初期化します。
@@ -76,11 +86,14 @@ public class OthelloGUI extends JFrame {
 		loadPanel = new LoadPanel(this);
 		homePanel = new HomePanel(this);
 		gamePanel = new GamePanel(this, 8);
+		resultPanel = new ResultPanel(this);
+		matchingPanel = new MatchingPanel(this);
 
 		// CardLayoutにパネルを追加
 		cardPanel.add(loadPanel, CARD_LOAD);
 		cardPanel.add(homePanel, CARD_HOME);
 		cardPanel.add(gamePanel, CARD_GAME);
+		cardPanel.add(resultPanel, CARD_RESULT);
 		add(cardPanel);
 
 		// ウィンドウを表示し、ロード画面を開始する
@@ -107,6 +120,51 @@ public class OthelloGUI extends JFrame {
 	 * ゲーム画面を表示します。
 	 */
 	public void showGame() {
+		cardLayout.show(cardPanel, CARD_GAME);
+	}
+
+	/**
+	 * 結果画面を表示します。
+	 *
+	 * @param blackCount 黒の駒数
+	 * @param whiteCount 白の駒数
+	 */
+	public void showResult(int blackCount, int whiteCount) {
+		resultPanel.setResult(blackCount, whiteCount);
+		cardLayout.show(cardPanel, CARD_RESULT);
+	}
+
+	/**
+	 * マッチング設定パネルをオーバーレイ表示します。
+	 */
+	public void showMatchingPanel() {
+		matchingPanel.reset();
+		matchingPanel.setBounds(0, 0, getWidth(), getHeight());
+		getLayeredPane().add(matchingPanel, JLayeredPane.POPUP_LAYER);
+		matchingPanel.setVisible(true);
+		matchingPanel.revalidate();
+		matchingPanel.repaint();
+	}
+
+	/**
+	 * マッチング設定パネルを非表示にします。
+	 */
+	public void hideMatchingPanel() {
+		getLayeredPane().remove(matchingPanel);
+		matchingPanel.setVisible(false);
+		repaint();
+	}
+
+	/**
+	 * ゲームを開始します。
+	 *
+	 * @param userName  ユーザー名
+	 * @param boardSize ボードサイズ
+	 */
+	public void startGame(String userName, int boardSize) {
+		hideMatchingPanel();
+		// TODO: GamePanelを新しいボードサイズで再作成するか、動的にサイズ変更する
+		// controller = new GameController();
 		cardLayout.show(cardPanel, CARD_GAME);
 	}
 }
