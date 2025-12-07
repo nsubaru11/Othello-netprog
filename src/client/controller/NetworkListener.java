@@ -2,8 +2,6 @@ package client.controller;
 
 import model.*;
 
-import java.util.*;
-
 public interface NetworkListener {
 	void onGameStart(Piece assignedColor);
 

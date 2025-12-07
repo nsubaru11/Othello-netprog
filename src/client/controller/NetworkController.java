@@ -8,10 +8,10 @@ import java.net.*;
 public class NetworkController {
 	private static final int DEFAULT_PORT = 10000;
 	private static final String DEFAULT_HOST = "localhost";
+	private final NetworkListener networkListener;
 	private Socket socket;
 	private PrintWriter out;
 	private BufferedReader in;
-	private final NetworkListener networkListener;
 
 	public NetworkController(NetworkListener listener) {
 		this.networkListener = listener;

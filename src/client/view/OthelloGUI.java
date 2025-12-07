@@ -20,6 +20,15 @@ public class OthelloGUI extends JFrame {
 	private static final Image ICON_IMAGE;
 	/** アプリケーションアイコンの画像パス */
 	private static final String ICON_IMAGE_PATH = "../assets/icon.png";
+	// CardLayout用のパネル識別文字列
+	/** ロード画面の識別子 */
+	private static final String CARD_LOAD = "load";
+	/** ホーム画面の識別子 */
+	private static final String CARD_HOME = "home";
+	/** ゲーム画面の識別子 */
+	private static final String CARD_GAME = "game";
+	/** 結果画面の識別子 */
+	private static final String CARD_RESULT = "result";
 
 	static {
 		// iconは読み込み失敗してもアプリ動作には影響しないため、ログ出力のみで続行
@@ -34,16 +43,6 @@ public class OthelloGUI extends JFrame {
 		}
 		ICON_IMAGE = image;
 	}
-
-	// CardLayout用のパネル識別文字列
-	/** ロード画面の識別子 */
-	private static final String CARD_LOAD = "load";
-	/** ホーム画面の識別子 */
-	private static final String CARD_HOME = "home";
-	/** ゲーム画面の識別子 */
-	private static final String CARD_GAME = "game";
-	/** 結果画面の識別子 */
-	private static final String CARD_RESULT = "result";
 
 	// --------------- フィールド ---------------
 	/** 画面切り替えレイアウトマネージャ */

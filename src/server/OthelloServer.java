@@ -6,8 +6,8 @@ import java.util.*;
 
 public class OthelloServer {
 	private static final int DEFAULT_PORT = 10000;
-	private ServerSocket serverSocket;
 	private final HashMap<Integer, Queue<ClientHandler>> waitingPlayers;
+	private ServerSocket serverSocket;
 
 	public OthelloServer(int port) {
 		waitingPlayers = new HashMap<>();
