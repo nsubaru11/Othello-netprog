@@ -80,12 +80,14 @@ public class GameController implements NetworkListener {
 	}
 
 	private void placePiece(int row, int col) {
-		if (currentTurn.isBlack()) {
+		// この代入式を消すとバグる（SwingUtilitiesは処理を後回しにするから、先に通信が終わってcurrentTurnが更新されてしまう。）
+		Piece piece = currentTurn;
+		if (piece.isBlack()) {
 			board.placeBlack(row, col);
-			SwingUtilities.invokeLater(() -> gui.setPiece(currentTurn, row, col));
+			SwingUtilities.invokeLater(() -> gui.setPiece(piece, row, col));
 		} else {
 			board.placeWhite(row, col);
-			SwingUtilities.invokeLater(() -> gui.setPiece(currentTurn, row, col));
+			SwingUtilities.invokeLater(() -> gui.setPiece(piece, row, col));
 		}
 	}
 
