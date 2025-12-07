@@ -29,20 +29,20 @@ public class ClientHandler extends Thread {
 	public void run() {
 		try {
 			// 最初のメッセージでプレイヤー名を取得
-			String firstLine = in.readLine();
-			if (firstLine != null && firstLine.startsWith("CONNECT ")) {
-				playerName = firstLine.substring(8);
+			String[] firstLine = in.readLine().split(" ");
+			if (firstLine[0].equals("CONNECT")) {
+				playerName = firstLine[1];
+				int boardSize = Integer.parseInt(firstLine[2]);
 				System.out.println("Player connected: " + playerName);
 
 				// マッチング待ちキューに追加
-				server.addWaitingPlayer(8, this);
+				server.addWaitingPlayer(boardSize, this);
 			}
 
 			// メッセージ受信ループ
 			while (true) {
 				String line = in.readLine();
 				if (line == null) break;
-
 				System.out.println("From " + playerName + ": " + line);
 				handleMessage(line);
 			}

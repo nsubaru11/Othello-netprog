@@ -37,12 +37,11 @@ public final class Board {
 	}
 
 	private void initializeBoard() {
-		int i = size / 2;
-		int j = (size - 1) / 2;
-		placeBlack(i, i);
-		placeWhite(i, j);
-		placeBlack(j, i);
-		placeWhite(j, j);
+		int half = size / 2;
+		placeBlack(half - 1, half - 1);
+		placeWhite(half - 1, half);
+		placeWhite(half, half - 1);
+		placeBlack(half, half);
 		updateValidMoves();
 	}
 
@@ -125,13 +124,13 @@ public final class Board {
 		updateValidMoves();
 	}
 
-	private void placeBlack(final int i, final int j) {
+	public void placeBlack(final int i, final int j) {
 		if (board[i][j].isWhite()) whiteCnt--;
 		blackCnt++;
 		board[i][j].setPiece(Piece.BLACK);
 	}
 
-	private void placeWhite(final int i, final int j) {
+	public void placeWhite(final int i, final int j) {
 		if (board[i][j].isBlack()) blackCnt--;
 		whiteCnt++;
 		board[i][j].setPiece(Piece.WHITE);

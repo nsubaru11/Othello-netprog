@@ -7,6 +7,8 @@ import java.net.*;
 import java.util.*;
 
 public class NetworkController {
+	private static int DEFAULT_PORT = 10000;
+	private static String DEFAULT_HOST = "localhost";
 	private Socket socket;
 	private PrintWriter out;
 	private BufferedReader in;
@@ -17,9 +19,9 @@ public class NetworkController {
 		this.gameController = controller;
 	}
 
-	public boolean connect(String host, int port, String playerName, int boardSize) {
+	public boolean connect(String playerName, int boardSize) {
 		try {
-			socket = new Socket(host, port);
+			socket = new Socket(DEFAULT_HOST, DEFAULT_PORT);
 			out = new PrintWriter(socket.getOutputStream(), true);
 			in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 			out.println("CONNECT " + playerName + " " + boardSize);
@@ -77,20 +79,6 @@ public class NetworkController {
 				gameController.onMoveAccepted(row, col);
 				break;
 
-			case "BOARD_UPDATE":
-				// BOARD_UPDATE row col piece flipped...
-				int r = Integer.parseInt(tokens[1]);
-				int c = Integer.parseInt(tokens[2]);
-				Piece p = Piece.valueOf(tokens[3]);
-
-				List<Integer> flipped = new ArrayList<>();
-				for (int i = 4; i < tokens.length; i++) {
-					flipped.add(Integer.parseInt(tokens[i]));
-				}
-
-				gameController.onBoardUpdate(r, c, p, flipped);
-				break;
-
 			case "GAME_OVER":
 				// GAME_OVER WIN/LOSE/DRAW
 				gameController.onGameOver(tokens[1]);
@@ -111,7 +99,6 @@ public class NetworkController {
 				while (true) {
 					String line = in.readLine();
 					if (line == null) break;
-
 					System.out.println("Received: " + line);
 					handleMessage(line);
 				}

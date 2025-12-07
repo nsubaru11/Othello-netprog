@@ -1,6 +1,7 @@
 package client.view;
 
 import client.controller.*;
+import model.*;
 
 import javax.imageio.*;
 import javax.swing.*;
@@ -125,6 +126,11 @@ public class OthelloGUI extends JFrame {
 		cardLayout.show(cardPanel, CARD_GAME);
 	}
 
+	public boolean showMessage(String text) {
+		gamePanel.showMessage(text);
+		return true;
+	}
+
 	/**
 	 * 結果画面を表示します。
 	 *
@@ -157,6 +163,10 @@ public class OthelloGUI extends JFrame {
 		repaint();
 	}
 
+	public void setPiece(Piece piece, int row, int col) {
+		gamePanel.setPiece(piece, row, col);
+	}
+
 	/**
 	 * ゲームを開始します。
 	 *
@@ -166,8 +176,8 @@ public class OthelloGUI extends JFrame {
 	 */
 	public boolean startGame(String userName, int boardSize) {
 		hideMatchingPanel();
-		controller = new GameController(boardSize, userName);
-		gamePanel = new GamePanel(this, boardSize);
+		controller = new GameController(this, boardSize, userName);
+		gamePanel = new GamePanel(this, controller, boardSize);
 		cardPanel.add(gamePanel, CARD_GAME);
 		boolean connect = controller.connect();
 		if (!connect) return false;

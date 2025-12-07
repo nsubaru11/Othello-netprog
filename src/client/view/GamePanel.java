@@ -1,5 +1,6 @@
 package client.view;
 
+import client.controller.*;
 import model.*;
 
 import javax.imageio.*;
@@ -42,10 +43,14 @@ class GamePanel extends JPanel {
 	private final int boardSize;
 	/** 親GUIへの参照 */
 	private final OthelloGUI gui;
+	/** コントローラーへの参照*/
+	private final GameController controller;
 	/** ボード上のボタン配列 */
 	private final JButton[][] board;
 	/** リサイズ用のリスナー */
 	private final ComponentListener componentListener;
+	/** タイトルラベル */
+	private final JLabel titleLabel;
 
 	/** 現在のセルサイズ */
 	private int cellSize;
@@ -62,14 +67,25 @@ class GamePanel extends JPanel {
 	 * @param gui       親となるOthelloGUIインスタンス
 	 * @param boardSize ボードのサイズ（片辺のマス数）
 	 */
-	public GamePanel(final OthelloGUI gui, final int boardSize) {
+	public GamePanel(final OthelloGUI gui, final GameController controller, final int boardSize) {
 		this.gui = gui;
+		this.controller = controller;
 		this.boardSize = boardSize;
 
 		// 画面構成の設定
 		setLayout(new GridBagLayout());
 		setBackground(gui.getBackground());
 		GridBagConstraints gbc = new GridBagConstraints();
+
+		// テキストを表示するためのラベル
+		titleLabel = new JLabel("Waiting...", SwingConstants.CENTER);
+		titleLabel.setFont(new Font("Arial", Font.BOLD, 28));
+		titleLabel.setForeground(Color.BLACK);
+		gbc.gridx = 0;
+		gbc.gridy = 0;
+		gbc.gridwidth = boardSize;
+		gbc.insets = new Insets(20, 20, 20, 20);
+		add(titleLabel, gbc);
 
 		// 各セルの初期化
 		board = new JButton[boardSize][boardSize];
@@ -82,7 +98,8 @@ class GamePanel extends JPanel {
 				int right = col == boardSize - 1 ? 10 : 0;
 				gbc.insets = new Insets(0, left, 0, right);
 				gbc.gridx = col;
-				gbc.gridy = row;
+				gbc.gridy = row + 1;
+				gbc.gridwidth = 1;
 				add(board[row][col], gbc);
 			}
 		}
@@ -98,10 +115,15 @@ class GamePanel extends JPanel {
 
 		resizeBoard();
 		int half = boardSize / 2;
-		setPiece(half - 1, half - 1, Piece.BLACK);
-		setPiece(half - 1, half, Piece.WHITE);
-		setPiece(half, half - 1, Piece.WHITE);
-		setPiece(half, half, Piece.BLACK);
+		setPiece(Piece.BLACK, half - 1, half - 1);
+		setPiece(Piece.WHITE, half - 1, half);
+		setPiece(Piece.WHITE, half, half - 1);
+		setPiece(Piece.BLACK, half, half);
+	}
+
+	public void showMessage(String message) {
+		titleLabel.setText(message);
+		repaint();
 	}
 
 	/**
@@ -159,7 +181,7 @@ class GamePanel extends JPanel {
 	 * @param col   列インデックス
 	 * @param piece 配置する駒
 	 */
-	public void setPiece(int row, int col, Piece piece) {
+	public void setPiece(Piece piece, int row, int col) {
 		board[row][col].putClientProperty(Piece.class, piece);
 		if (piece.isBlack()) {
 			board[row][col].setIcon(blackCellIcon);
@@ -167,20 +189,6 @@ class GamePanel extends JPanel {
 			board[row][col].setIcon(whiteCellIcon);
 		} else {
 			board[row][col].setIcon(greenCellIcon);
-		}
-	}
-
-	/**
-	 * 複数の位置に同じ種類の駒を配置します。
-	 *
-	 * @param piece     配置する駒
-	 * @param positions 位置のリスト（row * boardSize + col の形式）
-	 */
-	public void setPieces(Piece piece, List<Integer> positions) {
-		for (int position : positions) {
-			int row = position / boardSize;
-			int col = position % boardSize;
-			setPiece(row, col, piece);
 		}
 	}
 
@@ -244,17 +252,12 @@ class GamePanel extends JPanel {
 		button.setBorderPainted(false);
 		button.setContentAreaFilled(false);
 		button.setFocusPainted(false);
-
 		// 押下時のアクション
 		button.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mousePressed(final MouseEvent e) {
 				System.out.println("Cell(" + row + ", " + col + ", " + board[row][col].getClientProperty(Piece.class) + ")");
-			}
-
-			@Override
-			public void mouseReleased(final MouseEvent e) {
-				// TODO: コントローラーに伝達
+				controller.setPiece(row, col);
 			}
 		});
 	}

@@ -60,11 +60,7 @@ public class GameRoom {
 		board.setPiece(playerColor, row, col);
 
 		// 4. 両プレイヤーに通知
-		List<Integer> flipped = validMoves.get(posIndex);
-		String flippedStr = flipped.toString().replaceAll("[\\[\\],]", "");
-
-		player.sendMessage("MOVE_ACCEPTED " + row + " " + col);
-		broadcastMessage("BOARD_UPDATE " + row + " " + col + " " + playerColor + " " + flippedStr);
+		broadcastMessage("MOVE_ACCEPTED " + row + " " + col);
 
 		// 5. ターン交代
 		currentTurn = (currentTurn == Piece.BLACK) ? Piece.WHITE : Piece.BLACK;
