@@ -3,6 +3,7 @@ package client.controller;
 import client.view.*;
 import model.*;
 
+import javax.swing.*;
 import java.util.*;
 
 public class GameController implements NetworkListener {
@@ -37,19 +38,19 @@ public class GameController implements NetworkListener {
 		this.myColor = assignedColor;
 		this.currentTurn = Piece.BLACK;
 		System.out.println("Game started! You are " + myColor);
-		gui.showMessage("Game started! You are " + myColor);
+		SwingUtilities.invokeLater(() -> gui.showMessage("Game started! You are " + myColor));
 	}
 
 	public void onYourTurn() {
 		this.currentTurn = myColor;
 		System.out.println("Your turn!");
-		gui.showMessage("Your turn! Your color is " + myColor);
+		SwingUtilities.invokeLater(() -> gui.showMessage("Your turn! Your color is " + myColor));
 	}
 
 	public void onOpponentTurn() {
 		this.currentTurn = myColor == Piece.BLACK ? Piece.WHITE : Piece.BLACK;
 		System.out.println("Opponent's turn");
-		gui.showMessage("Opponent's turn");
+		SwingUtilities.invokeLater(() -> gui.showMessage("Opponent's turn"));
 	}
 
 	public void onMoveAccepted(int row, int col) {
@@ -66,21 +67,21 @@ public class GameController implements NetworkListener {
 
 	public void onGameOver(String result, int blackCount, int whiteCount) {
 		System.out.println(result + " " + blackCount + " - " + whiteCount);
-		gui.showMessage(result + ": " + blackCount + " - " + whiteCount);
+		SwingUtilities.invokeLater(() -> gui.showMessage(result + ": " + blackCount + " - " + whiteCount));
 	}
 
 	public void onNetworkError(String message) {
 		System.err.println("Network error: " + message);
-		gui.showMessage("Network error: " + message);
+		SwingUtilities.invokeLater(() -> gui.showMessage("Network error: " + message));
 	}
 
 	private void placePieces(int row, int col) {
 		if (currentTurn.isBlack()) {
 			board.placeBlack(row, col);
-			gui.setPiece(currentTurn, row, col);
+			SwingUtilities.invokeLater(() -> gui.setPiece(currentTurn, row, col));
 		} else {
 			board.placeWhite(row, col);
-			gui.setPiece(currentTurn, row, col);
+			SwingUtilities.invokeLater(() -> gui.setPiece(currentTurn, row, col));
 		}
 	}
 

@@ -126,9 +126,8 @@ public class OthelloGUI extends JFrame {
 		cardLayout.show(cardPanel, CARD_GAME);
 	}
 
-	public boolean showMessage(String text) {
+	public void showMessage(String text) {
 		gamePanel.showMessage(text);
-		return true;
 	}
 
 	/**
@@ -181,7 +180,7 @@ public class OthelloGUI extends JFrame {
 		cardPanel.add(gamePanel, CARD_GAME);
 		boolean connect = controller.connect();
 		if (!connect) return false;
-		cardLayout.show(cardPanel, CARD_GAME);
+		showGame();
 		return true;
 	}
 }
