@@ -107,6 +107,21 @@ public class GameRoom {
 		System.out.println("ルーム " + roomId + " でゲーム終了: " + result);
 	}
 
+	public void handleResign(ClientHandler resigner) {
+		ClientHandler opponent = resigner == player1 ? player2 : player1;
+
+		int blackCount = board.getStoneCount(Piece.BLACK);
+		int whiteCount = board.getStoneCount(Piece.WHITE);
+
+		resigner.sendMessage("GAME_OVER LOSE " + blackCount + " " + whiteCount);
+
+		opponent.sendMessage("OPPONENT_RESIGNED");
+		opponent.sendMessage("GAME_OVER WIN " + blackCount + " " + whiteCount);
+
+		System.out.println("Room " + roomId + ": Player resigned");
+		endGame();
+	}
+
 	public void handleDisconnect(ClientHandler player) {
 		// 相手に勝利通知
 		ClientHandler opponent = player == player1 ? player2 : player1;
