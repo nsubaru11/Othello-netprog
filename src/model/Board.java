@@ -19,13 +19,6 @@ public final class Board {
 	private int blackCnt = 0, whiteCnt = 0;
 
 	/**
-	 * 引数に指定が無ければ8*8の通常のオセロの作成。
-	 */
-	public Board() {
-		this(8);
-	}
-
-	/**
 	 * n*nのオセロの作成。ただし、nは6以上の偶数
 	 */
 	public Board(final int size) {
@@ -50,10 +43,6 @@ public final class Board {
 	 */
 	public int getStoneCount(final Piece piece) {
 		return piece.isBlack() ? blackCnt : whiteCnt;
-	}
-
-	public int getSize() {
-		return size;
 	}
 
 	public Map<Integer, List<Integer>> getValidCells(final Piece piece) {
@@ -134,6 +123,10 @@ public final class Board {
 		if (board[i][j].isBlack()) blackCnt--;
 		whiteCnt++;
 		board[i][j].setPiece(Piece.WHITE);
+	}
+
+	public boolean canSet(Piece player, int i, int j) {
+		return getValidCells(player).get(i * size + j) != null;
 	}
 
 	/**

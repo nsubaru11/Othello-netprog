@@ -176,7 +176,7 @@ public class OthelloGUI extends JFrame {
 	 */
 	public boolean startGame(String userName, int boardSize) {
 		hideMatchingPanel();
-		controller = new GameController(this, boardSize, userName);
+		controller = new GameController(this, userName, boardSize);
 		gamePanel = new GamePanel(this, controller, boardSize);
 		cardPanel.add(gamePanel, CARD_GAME);
 		boolean connect = controller.connect();

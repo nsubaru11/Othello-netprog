@@ -4,19 +4,17 @@ import model.*;
 
 import java.io.*;
 import java.net.*;
-import java.util.*;
 
 public class NetworkController {
-	private static int DEFAULT_PORT = 10000;
-	private static String DEFAULT_HOST = "localhost";
+	private static final int DEFAULT_PORT = 10000;
+	private static final String DEFAULT_HOST = "localhost";
 	private Socket socket;
 	private PrintWriter out;
 	private BufferedReader in;
-	private GameController gameController;
-	private MessageReceiveThread receiveThread;
+	private final NetworkListener networkListener;
 
-	public NetworkController(GameController controller) {
-		this.gameController = controller;
+	public NetworkController(NetworkListener listener) {
+		this.networkListener = listener;
 	}
 
 	public boolean connect(String playerName, int boardSize) {
@@ -26,7 +24,7 @@ public class NetworkController {
 			in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 			out.println("CONNECT " + playerName + " " + boardSize);
 			out.flush();
-			receiveThread = new MessageReceiveThread();
+			MessageReceiveThread receiveThread = new MessageReceiveThread();
 			receiveThread.start();
 			return true;
 		} catch (IOException e) {
@@ -61,27 +59,29 @@ public class NetworkController {
 			case "GAME_START":
 				// GAME_START BLACK or GAME_START WHITE
 				Piece color = Piece.valueOf(tokens[1]);
-				gameController.onGameStart(color);
+				networkListener.onGameStart(color);
 				break;
 
 			case "YOUR_TURN":
-				gameController.onYourTurn();
+				networkListener.onYourTurn();
 				break;
 
 			case "OPPONENT_TURN":
-				gameController.onOpponentTurn();
+				networkListener.onOpponentTurn();
 				break;
 
 			case "MOVE_ACCEPTED":
 				// MOVE_ACCEPTED row col
 				int row = Integer.parseInt(tokens[1]);
 				int col = Integer.parseInt(tokens[2]);
-				gameController.onMoveAccepted(row, col);
+				networkListener.onMoveAccepted(row, col);
 				break;
 
 			case "GAME_OVER":
 				// GAME_OVER WIN/LOSE/DRAW
-				gameController.onGameOver(tokens[1]);
+				int blackCount = Integer.parseInt(tokens[2]);
+				int whiteCount = Integer.parseInt(tokens[3]);
+				networkListener.onGameOver(tokens[1], blackCount, whiteCount);
 				break;
 
 			case "ERROR":
@@ -103,7 +103,7 @@ public class NetworkController {
 					handleMessage(line);
 				}
 			} catch (IOException e) {
-				gameController.onNetworkError("Connection lost");
+				networkListener.onNetworkError("Connection lost");
 			}
 		}
 	}
