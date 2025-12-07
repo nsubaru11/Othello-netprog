@@ -24,6 +24,8 @@ class MatchingPanel extends JPanel {
 	private final JButton startButton;
 	/** キャンセルボタン */
 	private final JButton cancelButton;
+	/** ユーザーネームのキャッシュ */
+	private String userName = "";
 
 	/**
 	 * MatchingPanelを構築します。
@@ -197,7 +199,7 @@ class MatchingPanel extends JPanel {
 	 * 開始ボタンクリック時の処理です。
 	 */
 	private void onStartClicked() {
-		String userName = userNameField.getText().trim();
+		userName = userNameField.getText().trim();
 		if (userName.isEmpty()) {
 			JOptionPane.showMessageDialog(this,
 					"ユーザー名を入力してください。",
@@ -221,7 +223,7 @@ class MatchingPanel extends JPanel {
 	 * パネル表示時に入力フィールドをリセットします。
 	 */
 	public void reset() {
-		userNameField.setText("");
+		userNameField.setText(userName);
 		boardSizeComboBox.setSelectedItem(8);
 		userNameField.requestFocusInWindow();
 	}
