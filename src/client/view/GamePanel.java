@@ -114,10 +114,10 @@ class GamePanel extends JPanel {
 
 		resizeBoard();
 		int half = boardSize / 2;
-		setPiece(Piece.BLACK, half - 1, half - 1);
-		setPiece(Piece.WHITE, half - 1, half);
-		setPiece(Piece.WHITE, half, half - 1);
-		setPiece(Piece.BLACK, half, half);
+		setPiece(Piece.WHITE, half - 1, half - 1);
+		setPiece(Piece.BLACK, half - 1, half);
+		setPiece(Piece.BLACK, half, half - 1);
+		setPiece(Piece.WHITE, half, half);
 	}
 
 	public void showMessage(String message) {
@@ -159,10 +159,10 @@ class GamePanel extends JPanel {
 					Piece piece = (Piece) button.getClientProperty(Piece.class);
 					if (piece == null) {
 						button.setIcon(greenCellIcon);
-					} else if (piece.isBlack()) {
-						button.setIcon(blackCellIcon);
 					} else if (piece.isWhite()) {
 						button.setIcon(whiteCellIcon);
+					} else if (piece.isBlack()) {
+						button.setIcon(blackCellIcon);
 					} else {
 						button.setIcon(greenCellIcon);
 					}
@@ -182,10 +182,10 @@ class GamePanel extends JPanel {
 	 */
 	public void setPiece(Piece piece, int i, int j) {
 		board[i][j].putClientProperty(Piece.class, piece);
-		if (piece.isBlack()) {
-			board[i][j].setIcon(blackCellIcon);
-		} else if (piece.isWhite()) {
+		if (piece.isWhite()) {
 			board[i][j].setIcon(whiteCellIcon);
+		} else if (piece.isBlack()) {
+			board[i][j].setIcon(blackCellIcon);
 		} else {
 			board[i][j].setIcon(greenCellIcon);
 		}

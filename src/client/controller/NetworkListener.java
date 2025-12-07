@@ -11,7 +11,7 @@ public interface NetworkListener {
 
 	void onMoveAccepted(int i, int j);
 
-	void onGameOver(String result, int blackCount, int whiteCount);
+	void onGameOver(String result, int whiteCount, int blackCount);
 
 	void onNetworkError(String message);
 }

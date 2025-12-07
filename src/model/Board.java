@@ -14,9 +14,9 @@ public final class Board {
 	};
 	private final int size;
 	private final Cell[][] board;
-	private final Map<Integer, List<Integer>> blackValidCells = new HashMap<>();
 	private final Map<Integer, List<Integer>> whiteValidCells = new HashMap<>();
-	private int blackCount = 0, whiteCount = 0;
+	private final Map<Integer, List<Integer>> blackValidCells = new HashMap<>();
+	private int whiteCount = 0, blackCount = 0;
 
 	/**
 	 * n*nのオセロの作成。ただし、nは6以上の偶数
@@ -31,10 +31,10 @@ public final class Board {
 
 	private void initializeBoard() {
 		int half = size / 2;
-		placeBlack(half - 1, half - 1);
-		placeWhite(half - 1, half);
-		placeWhite(half, half - 1);
-		placeBlack(half, half);
+		placeWhite(half - 1, half - 1);
+		placeBlack(half - 1, half);
+		placeBlack(half, half - 1);
+		placeWhite(half, half);
 		updateValidMoves();
 	}
 
@@ -45,16 +45,16 @@ public final class Board {
 	 * @return プレイヤーの駒数
 	 */
 	public int getStoneCount(final Piece piece) {
-		return piece.isBlack() ? blackCount : whiteCount;
+		return piece.isWhite() ? whiteCount : blackCount;
 	}
 
 	public Map<Integer, List<Integer>> getValidCells(final Piece piece) {
-		return piece.isBlack() ? blackValidCells : whiteValidCells;
+		return piece.isWhite() ? whiteValidCells : blackValidCells;
 	}
 
 	public void updateValidMoves() {
-		blackValidCells.clear();
 		whiteValidCells.clear();
+		blackValidCells.clear();
 		for (int i = 0; i < size; i++) {
 			for (int j = 0; j < size; j++) {
 				Piece piece = board[i][j].getPiece();
@@ -97,35 +97,35 @@ public final class Board {
 	 * 引数に与えたplayerが置くことのできるコマ数
 	 */
 	public int countValidCells(final Piece player) {
-		return player.isBlack() ? blackValidCells.size() : whiteValidCells.size();
+		return player.isWhite() ? whiteValidCells.size() : blackValidCells.size();
 	}
 
 	/**
 	 * playerが座標i, jにコマを置く（この座標は置くことができるという前提）
 	 */
 	public void setPiece(final Piece player, final int i, final int j) {
-		if (player.isBlack()) placeBlack(i, j);
-		else placeWhite(i, j);
-		List<Integer> validCells = player.isBlack() ? blackValidCells.get(i * size + j) : whiteValidCells.get(i * size + j);
+		if (player.isWhite()) placeWhite(i, j);
+		else placeBlack(i, j);
+		List<Integer> validCells = player.isWhite() ? whiteValidCells.get(i * size + j) : blackValidCells.get(i * size + j);
 		for (int cell : validCells) {
 			int ni = cell / size;
 			int nj = cell % size;
-			if (player.isBlack()) placeBlack(ni, nj);
-			else placeWhite(ni, nj);
+			if (player.isWhite()) placeWhite(ni, nj);
+			else placeBlack(ni, nj);
 		}
 		updateValidMoves();
-	}
-
-	public void placeBlack(final int i, final int j) {
-		if (board[i][j].isWhite()) whiteCount--;
-		blackCount++;
-		board[i][j].setPiece(Piece.BLACK);
 	}
 
 	public void placeWhite(final int i, final int j) {
 		if (board[i][j].isBlack()) blackCount--;
 		whiteCount++;
 		board[i][j].setPiece(Piece.WHITE);
+	}
+
+	public void placeBlack(final int i, final int j) {
+		if (board[i][j].isWhite()) whiteCount--;
+		blackCount++;
+		board[i][j].setPiece(Piece.BLACK);
 	}
 
 	public boolean canSet(Piece player, int i, int j) {

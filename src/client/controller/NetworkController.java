@@ -56,7 +56,7 @@ public class NetworkController {
 
 		switch (command) {
 			case GAME_START:
-				// GAME_START BLACK または GAME_START WHITE
+				// GAME_START WHITE または GAME_START BLACK
 				Piece color = Piece.valueOf(tokens[1]);
 				networkListener.onGameStart(color);
 				break;
@@ -77,10 +77,10 @@ public class NetworkController {
 				break;
 
 			case GAME_OVER:
-				// GAME_OVER WIN/LOSE/DRAW blackCount whiteCount
-				int blackCount = Integer.parseInt(tokens[2]);
-				int whiteCount = Integer.parseInt(tokens[3]);
-				networkListener.onGameOver(tokens[1], blackCount, whiteCount);
+				// GAME_OVER WIN/LOSE/DRAW whiteCount blackCount
+				int whiteCount = Integer.parseInt(tokens[2]);
+				int blackCount = Integer.parseInt(tokens[3]);
+				networkListener.onGameOver(tokens[1], whiteCount, blackCount);
 				break;
 
 			case ERROR:

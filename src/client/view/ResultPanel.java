@@ -41,13 +41,11 @@ class ResultPanel extends JPanel {
 	private ImageIcon homeIconNormal;
 	/** ホームボタンの押下時アイコン */
 	private ImageIcon homeIconPressed;
-	/** 黒の駒数 */
-	private int blackCount = 0;
 	/** 白の駒数 */
 	private int whiteCount = 0;
-	/**
-	 * 結果（"WIN", "LOSE", "DRAW"）
-	 */
+	/** 黒の駒数 */
+	private int blackCount = 0;
+	/** 結果（"WIN", "LOSE", "DRAW"） */
 	private String result = "";
 
 	/**
@@ -87,13 +85,14 @@ class ResultPanel extends JPanel {
 	/**
 	 * ゲーム結果を設定します。
 	 *
-	 * @param blackCount 黒の駒数
+	 * @param result     試合結果
 	 * @param whiteCount 白の駒数
+	 * @param blackCount 黒の駒数
 	 */
-	public void setResult(String result, int blackCount, int whiteCount) {
+	public void setResult(String result, int whiteCount, int blackCount) {
 		this.result = result;
-		this.blackCount = blackCount;
 		this.whiteCount = whiteCount;
+		this.blackCount = blackCount;
 		repaint();
 	}
 
@@ -174,7 +173,7 @@ class ResultPanel extends JPanel {
 		g2d.drawString(titleText, textX, textY);
 
 		// スコアの描画
-		String scoreText = "Black: " + blackCount + " - White: " + whiteCount;
+		String scoreText = "White: " + whiteCount + " - Black: " + blackCount;
 		g2d.setFont(SCORE_FONT);
 		fm = g2d.getFontMetrics();
 		textWidth = fm.stringWidth(scoreText);

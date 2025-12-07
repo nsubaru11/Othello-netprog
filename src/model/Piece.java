@@ -1,7 +1,7 @@
 package model;
 
 public enum Piece {
-	BLACK, WHITE, EMPTY;
+	WHITE, BLACK, EMPTY;
 
 	public boolean isOpponentPiece(final Piece piece) {
 		if (this == EMPTY || piece == EMPTY) return false;

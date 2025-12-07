@@ -40,7 +40,7 @@ public class GameController implements NetworkListener {
 
 	public void onGameStart(Piece assignedColor) {
 		this.myColor = assignedColor;
-		this.currentTurn = Piece.BLACK;
+		this.currentTurn = Piece.WHITE;
 		System.out.println("ゲーム開始！あなたは " + myColor);
 		SwingUtilities.invokeLater(() -> gui.showMessage("Game started! You are " + myColor));
 	}
@@ -52,7 +52,7 @@ public class GameController implements NetworkListener {
 	}
 
 	public void onOpponentTurn() {
-		this.currentTurn = myColor == Piece.BLACK ? Piece.WHITE : Piece.BLACK;
+		this.currentTurn = myColor == Piece.WHITE ? Piece.BLACK : Piece.WHITE;
 		System.out.println("相手のターン");
 		SwingUtilities.invokeLater(() -> gui.showMessage("Opponent's turn"));
 	}
@@ -69,9 +69,9 @@ public class GameController implements NetworkListener {
 		board.updateValidMoves();
 	}
 
-	public void onGameOver(String result, int blackCount, int whiteCount) {
-		System.out.println(result + " " + blackCount + " - " + whiteCount);
-		SwingUtilities.invokeLater(() -> gui.showResult(result, blackCount, whiteCount));
+	public void onGameOver(String result, int whiteCount, int blackCount) {
+		System.out.println(result + " " + whiteCount + " - " + blackCount);
+		SwingUtilities.invokeLater(() -> gui.showResult(result, whiteCount, blackCount));
 	}
 
 	public void onNetworkError(String message) {
@@ -82,11 +82,11 @@ public class GameController implements NetworkListener {
 	private void placePiece(int i, int j) {
 		// この代入式を消すとバグる（SwingUtilitiesは処理を後回しにするから、先に通信が終わってcurrentTurnが更新されてしまう。）
 		Piece piece = currentTurn;
-		if (piece.isBlack()) {
-			board.placeBlack(i, j);
+		if (piece.isWhite()) {
+			board.placeWhite(i, j);
 			SwingUtilities.invokeLater(() -> gui.setPiece(piece, i, j));
 		} else {
-			board.placeWhite(i, j);
+			board.placeBlack(i, j);
 			SwingUtilities.invokeLater(() -> gui.setPiece(piece, i, j));
 		}
 	}

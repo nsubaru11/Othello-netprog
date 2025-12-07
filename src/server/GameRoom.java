@@ -3,19 +3,21 @@ package server;
 import common.*;
 import model.*;
 
+import java.util.*;
+
 public class GameRoom {
 	private static int roomIdCounter = 0;
 
 	private final int roomId;
 	private final Board board;
-	private final ClientHandler player1;  // 黒
-	private final ClientHandler player2;  // 白
+	private final ClientHandler player1;  // 白
+	private final ClientHandler player2;  // 黒
 	private Piece currentTurn;
 
 	public GameRoom(ClientHandler player1, ClientHandler player2, int boardSize) {
 		this.roomId = roomIdCounter++;
 		this.board = new Board(boardSize);
-		this.currentTurn = Piece.BLACK;
+		this.currentTurn = Piece.WHITE;
 
 		// player1
 		this.player1 = player1;
@@ -29,8 +31,8 @@ public class GameRoom {
 	}
 
 	private void startGame() {
-		player1.sendMessage(Protocol.gameStart(Piece.BLACK));
-		player2.sendMessage(Protocol.gameStart(Piece.WHITE));
+		player1.sendMessage(Protocol.gameStart(Piece.WHITE));
+		player2.sendMessage(Protocol.gameStart(Piece.BLACK));
 
 		player1.sendMessage(Protocol.yourTurn());
 		player2.sendMessage(Protocol.opponentTurn());
@@ -47,7 +49,7 @@ public class GameRoom {
 		if (isGameOver()) endGame();
 
 		// ターンを切り替える
-		currentTurn = currentTurn == Piece.BLACK ? Piece.WHITE : Piece.BLACK;
+		currentTurn = currentTurn == Piece.WHITE ? Piece.BLACK : Piece.WHITE;
 
 		// 置けるかどうかチェック
 		if (board.countValidCells(currentTurn) > 0) {
@@ -62,12 +64,12 @@ public class GameRoom {
 		broadcastMessage(Protocol.pass(currentTurn));
 
 		// ターンを切り替える
-		currentTurn = currentTurn == Piece.BLACK ? Piece.WHITE : Piece.BLACK;
+		currentTurn = currentTurn == Piece.WHITE ? Piece.BLACK : Piece.WHITE;
 		notifyTurnChange();
 	}
 
 	private void notifyTurnChange() {
-		if (currentTurn == Piece.BLACK) {
+		if (currentTurn == Piece.WHITE) {
 			player1.sendMessage(Protocol.yourTurn());
 			player2.sendMessage(Protocol.opponentTurn());
 		} else {
@@ -77,7 +79,7 @@ public class GameRoom {
 	}
 
 	private boolean isGameOver() {
-		return board.countValidCells(Piece.BLACK) == 0 && board.countValidCells(Piece.WHITE) == 0;
+		return board.countValidCells(Piece.WHITE) == 0 && board.countValidCells(Piece.BLACK) == 0;
 	}
 
 	private void endGame() {
@@ -87,21 +89,21 @@ public class GameRoom {
 	}
 
 	private void notifyResult() {
-		int blackCount = board.getStoneCount(Piece.BLACK);
 		int whiteCount = board.getStoneCount(Piece.WHITE);
+		int blackCount = board.getStoneCount(Piece.BLACK);
 
 		String result;
-		if (blackCount > whiteCount) {
-			player1.sendMessage(Protocol.gameWin(blackCount, whiteCount));
-			player2.sendMessage(Protocol.gameLose(blackCount, whiteCount));
-			result = "黒の勝利";
-		} else if (whiteCount > blackCount) {
-			player1.sendMessage(Protocol.gameLose(blackCount, whiteCount));
-			player2.sendMessage(Protocol.gameWin(blackCount, whiteCount));
+		if (whiteCount > blackCount) {
+			player1.sendMessage(Protocol.gameWin(whiteCount, blackCount));
+			player2.sendMessage(Protocol.gameLose(whiteCount, blackCount));
 			result = "白の勝利";
+		} else if (whiteCount < blackCount) {
+			player1.sendMessage(Protocol.gameLose(whiteCount, blackCount));
+			player2.sendMessage(Protocol.gameWin(whiteCount, blackCount));
+			result = "黒の勝利";
 		} else {
-			player1.sendMessage(Protocol.gameDraw(blackCount, whiteCount));
-			player2.sendMessage(Protocol.gameDraw(blackCount, whiteCount));
+			player1.sendMessage(Protocol.gameDraw(whiteCount, blackCount));
+			player2.sendMessage(Protocol.gameDraw(whiteCount, blackCount));
 			result = "引き分け";
 		}
 
@@ -111,13 +113,13 @@ public class GameRoom {
 	public void handleResign(ClientHandler resigner) {
 		ClientHandler opponent = resigner == player1 ? player2 : player1;
 
-		int blackCount = board.getStoneCount(Piece.BLACK);
 		int whiteCount = board.getStoneCount(Piece.WHITE);
+		int blackCount = board.getStoneCount(Piece.BLACK);
 
-		resigner.sendMessage(Protocol.gameLose(blackCount, whiteCount));
+		resigner.sendMessage(Protocol.gameLose(whiteCount, blackCount));
 
 		opponent.sendMessage(Protocol.opponentResigned());
-		opponent.sendMessage(Protocol.gameWin(blackCount, whiteCount));
+		opponent.sendMessage(Protocol.gameWin(whiteCount, blackCount));
 
 		System.out.println("Room " + roomId + ": Player resigned");
 		endGame();
@@ -128,9 +130,9 @@ public class GameRoom {
 		ClientHandler opponent = player == player1 ? player2 : player1;
 		if (opponent != null) {
 			opponent.sendMessage(Protocol.opponentDisconnected());
-			int blackCount = board.getStoneCount(Piece.BLACK);
 			int whiteCount = board.getStoneCount(Piece.WHITE);
-			opponent.sendMessage(Protocol.gameWin(blackCount, whiteCount));
+			int blackCount = board.getStoneCount(Piece.BLACK);
+			opponent.sendMessage(Protocol.gameWin(whiteCount, blackCount));
 		}
 
 		System.out.println("ルーム " + roomId + " でプレイヤー切断");

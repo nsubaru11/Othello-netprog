@@ -38,16 +38,16 @@ public final class Protocol {
 		return CommandType.YOUR_TURN.command();
 	}
 
-	public static String gameWin(int blackCount, int whiteCount) {
-		return formatResult("WIN", blackCount, whiteCount);
+	public static String gameWin(int whiteCount, int blackCount) {
+		return formatResult("WIN", whiteCount, blackCount);
 	}
 
-	public static String gameLose(int blackCount, int whiteCount) {
-		return formatResult("LOSE", blackCount, whiteCount);
+	public static String gameLose(int whiteCount, int blackCount) {
+		return formatResult("LOSE", whiteCount, blackCount);
 	}
 
-	public static String gameDraw(int blackCount, int whiteCount) {
-		return formatResult("DRAW", blackCount, whiteCount);
+	public static String gameDraw(int whiteCount, int blackCount) {
+		return formatResult("DRAW", whiteCount, blackCount);
 	}
 
 	public static String opponentResigned() {
@@ -58,7 +58,7 @@ public final class Protocol {
 		return CommandType.OPPONENT_DISCONNECTED.command();
 	}
 
-	private static String formatResult(String result, int blackCount, int whiteCount) {
-		return CommandType.GAME_OVER.command() + " " + result + " " + blackCount + " " + whiteCount;
+	private static String formatResult(String result, int whiteCount, int blackCount) {
+		return CommandType.GAME_OVER.command() + " " + result + " " + whiteCount + " " + blackCount;
 	}
 }
