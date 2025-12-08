@@ -18,28 +18,38 @@ import java.util.*;
  */
 class GamePanel extends JPanel {
 	// --------------- クラス定数 ---------------
+	/** 白駒（ハイライト）の画像のパス */
+	private static final String WHITE_HINT_IMAGE_PATH = "../assets/white_hint.png";
+	/** 黒駒（ハイライト）の画像のパス */
+	private static final String BLACK_HINT_IMAGE_PATH = "../assets/black_hint.png";
 	/** 白駒の画像のパス */
-	private static final String WHITE_IMAGE_PATH = "../assets/white.jpg";
+	private static final String WHITE_STONE_IMAGE_PATH = "../assets/white_stone.jpg";
 	/** 黒駒の画像のパス */
-	private static final String BLACK_IMAGE_PATH = "../assets/black.jpg";
+	private static final String BLACK_STONE_IMAGE_PATH = "../assets/black_stone.jpg";
 	/** 空きマスの画像のパス */
-	private static final String GREEN_FRAME_IMAGE_PATH = "../assets/greenFrame.jpg";
+	private static final String EMPTY_CELL_IMAGE_PATH = "../assets/move_hint_frame.jpg";
 	/** 背景画像のパス */
 	private static final String BACKGROUND_IMAGE_PATH = "../assets/background.png";
+	/** 白駒（ハイライト）の画像 */
+	private static final BufferedImage WHITE_HINT_IMAGE;
+	/** 黒駒（ハイライト）の画像 */
+	private static final BufferedImage BLACK_HINT_IMAGE;
 	/** 白駒の画像 */
-	private static final BufferedImage WHITE_IMAGE;
+	private static final BufferedImage WHITE_STONE_IMAGE;
 	/** 黒駒の画像 */
-	private static final BufferedImage BLACK_IMAGE;
+	private static final BufferedImage BLACK_STONE_IMAGE;
 	/** 空きマスの画像 */
-	private static final BufferedImage GREEN_FRAME_IMAGE;
+	private static final BufferedImage EMPTY_CELL_IMAGE;
 	/** 背景画像 */
 	private static final BufferedImage BACKGROUND_IMAGE;
 
 	static {
 		try {
-			WHITE_IMAGE = ImageIO.read(Objects.requireNonNull(GamePanel.class.getResource(WHITE_IMAGE_PATH)));
-			BLACK_IMAGE = ImageIO.read(Objects.requireNonNull(GamePanel.class.getResource(BLACK_IMAGE_PATH)));
-			GREEN_FRAME_IMAGE = ImageIO.read(Objects.requireNonNull(GamePanel.class.getResource(GREEN_FRAME_IMAGE_PATH)));
+			WHITE_HINT_IMAGE = ImageIO.read(Objects.requireNonNull(GamePanel.class.getResource(WHITE_HINT_IMAGE_PATH)));
+			BLACK_HINT_IMAGE = ImageIO.read(Objects.requireNonNull(GamePanel.class.getResource(BLACK_HINT_IMAGE_PATH)));
+			WHITE_STONE_IMAGE = ImageIO.read(Objects.requireNonNull(GamePanel.class.getResource(WHITE_STONE_IMAGE_PATH)));
+			BLACK_STONE_IMAGE = ImageIO.read(Objects.requireNonNull(GamePanel.class.getResource(BLACK_STONE_IMAGE_PATH)));
+			EMPTY_CELL_IMAGE = ImageIO.read(Objects.requireNonNull(GamePanel.class.getResource(EMPTY_CELL_IMAGE_PATH)));
 			BACKGROUND_IMAGE = ImageIO.read(Objects.requireNonNull(GamePanel.class.getResourceAsStream(BACKGROUND_IMAGE_PATH)));
 		} catch (final IOException | NullPointerException e) {
 			throw new RuntimeException("セル画像の読み込みに失敗しました", e);
@@ -63,11 +73,15 @@ class GamePanel extends JPanel {
 	/** 現在のセルサイズ */
 	private int cellSize;
 	/** 白駒のアイコン */
-	private ImageIcon whiteCellIcon;
+	private ImageIcon whiteStoneIcon;
 	/** 黒駒のアイコン */
-	private ImageIcon blackCellIcon;
+	private ImageIcon blackStoneIcon;
 	/** 空きマスのアイコン */
-	private ImageIcon greenCellIcon;
+	private ImageIcon emptyCellIcon;
+	/** 半透明の白駒のアイコン */
+	private ImageIcon whiteHintIcon;
+	/** 半透明の黒駒のアイコン */
+	private ImageIcon blackHintIcon;
 
 	/**
 	 * GamePanelを構築します。
@@ -100,7 +114,7 @@ class GamePanel extends JPanel {
 		for (int i = 0; i < boardSize; i++) {
 			for (int j = 0; j < boardSize; j++) {
 				board[i][j] = new JButton();
-				initButton(i, j, greenCellIcon);
+				initButton(i, j, emptyCellIcon);
 				// 端のマスには余白を挿入
 				int left = j == 0 ? 10 : 0;
 				int right = j == boardSize - 1 ? 10 : 0;
@@ -157,11 +171,29 @@ class GamePanel extends JPanel {
 	public void setPiece(final Piece piece, final int i, final int j) {
 		board[i][j].putClientProperty(Piece.class, piece);
 		if (piece.isWhite()) {
-			board[i][j].setIcon(whiteCellIcon);
+			board[i][j].setIcon(whiteStoneIcon);
 		} else if (piece.isBlack()) {
-			board[i][j].setIcon(blackCellIcon);
+			board[i][j].setIcon(blackStoneIcon);
 		} else {
-			board[i][j].setIcon(greenCellIcon);
+			board[i][j].setIcon(emptyCellIcon);
+		}
+	}
+
+	/**
+	 * 指定位置に駒を配置します。
+	 *
+	 * @param piece 配置する駒
+	 * @param i     行インデックス
+	 * @param j     列インデックス
+	 */
+	public void setValidPiece(final Piece piece, final int i, final int j) {
+		board[i][j].putClientProperty(Piece.class, piece);
+		if (piece.isWhite()) {
+			board[i][j].setIcon(whiteHintIcon);
+		} else if (piece.isBlack()) {
+			board[i][j].setIcon(blackHintIcon);
+		} else {
+			board[i][j].setIcon(emptyCellIcon);
 		}
 	}
 
@@ -222,13 +254,13 @@ class GamePanel extends JPanel {
 					button.setPreferredSize(newDim);
 					Piece piece = (Piece) button.getClientProperty(Piece.class);
 					if (piece == null) {
-						button.setIcon(greenCellIcon);
+						button.setIcon(emptyCellIcon);
 					} else if (piece.isWhite()) {
-						button.setIcon(whiteCellIcon);
+						button.setIcon(whiteStoneIcon);
 					} else if (piece.isBlack()) {
-						button.setIcon(blackCellIcon);
+						button.setIcon(blackStoneIcon);
 					} else {
-						button.setIcon(greenCellIcon);
+						button.setIcon(emptyCellIcon);
 					}
 				}
 			}
@@ -244,9 +276,11 @@ class GamePanel extends JPanel {
 	 * @param cellSize ボタンサイズ
 	 */
 	private void prepareImages(final int cellSize) {
-		whiteCellIcon = new ImageIcon(WHITE_IMAGE.getScaledInstance(cellSize, cellSize, Image.SCALE_SMOOTH));
-		blackCellIcon = new ImageIcon(BLACK_IMAGE.getScaledInstance(cellSize, cellSize, Image.SCALE_SMOOTH));
-		greenCellIcon = new ImageIcon(GREEN_FRAME_IMAGE.getScaledInstance(cellSize, cellSize, Image.SCALE_SMOOTH));
+		whiteStoneIcon = new ImageIcon(WHITE_STONE_IMAGE.getScaledInstance(cellSize, cellSize, Image.SCALE_SMOOTH));
+		whiteHintIcon = new ImageIcon(WHITE_HINT_IMAGE.getScaledInstance(cellSize, cellSize, Image.SCALE_SMOOTH));
+		blackStoneIcon = new ImageIcon(BLACK_STONE_IMAGE.getScaledInstance(cellSize, cellSize, Image.SCALE_SMOOTH));
+		blackHintIcon = new ImageIcon(BLACK_HINT_IMAGE.getScaledInstance(cellSize, cellSize, Image.SCALE_SMOOTH));
+		emptyCellIcon = new ImageIcon(EMPTY_CELL_IMAGE.getScaledInstance(cellSize, cellSize, Image.SCALE_SMOOTH));
 	}
 
 	/**

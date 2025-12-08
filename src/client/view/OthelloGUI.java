@@ -175,6 +175,17 @@ public class OthelloGUI extends JFrame {
 	}
 
 	/**
+	 * ゲーム画面のセルを更新します。（TODO: この実装あんま良くない2）
+	 *
+	 * @param piece 石の色
+	 * @param i     行
+	 * @param j     列
+	 */
+	public void setValidPiece(final Piece piece, final int i, final int j) {
+		gamePanel.setValidPiece(piece, i, j);
+	}
+
+	/**
 	 * 結果画面を表示します。
 	 *
 	 * @param result 結果の文字列

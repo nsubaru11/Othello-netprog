@@ -54,6 +54,11 @@ public class GameController implements NetworkListener {
 		this.currentTurn = myColor;
 		System.out.println("あなたのターン！");
 		SwingUtilities.invokeLater(() -> gui.showMessage("Your turn! Your color is " + myColor));
+		for (int index : board.getValidCells(myColor).keySet()) {
+			int i = index / boardSize;
+			int j = index % boardSize;
+			SwingUtilities.invokeLater(() -> gui.setValidPiece(myColor, i, j));
+		}
 	}
 
 	public void onOpponentTurn() {
@@ -65,6 +70,11 @@ public class GameController implements NetworkListener {
 	public void onMoveAccepted(int i, int j) {
 		// 自分または相手が駒を正しく置いたときに呼ばれる
 		System.out.println("手が受理されました: (" + i + ", " + j + ")");
+		for (int index : board.getValidCells(myColor).keySet()) {
+			int ni = index / boardSize;
+			int nj = index % boardSize;
+			SwingUtilities.invokeLater(() -> gui.setPiece(Piece.EMPTY, ni, nj));
+		}
 		placePiece(i, j);
 		List<Integer> validCells = board.getValidCells(currentTurn).get(i * boardSize + j);
 		for (int cell : validCells) {
