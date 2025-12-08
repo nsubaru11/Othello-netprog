@@ -18,10 +18,10 @@ import java.util.*;
  */
 class GamePanel extends JPanel {
 	// --------------- クラス定数 ---------------
-	/** 白駒（ハイライト）の画像のパス */
-	private static final String WHITE_HINT_IMAGE_PATH = "../assets/white_hint.png";
-	/** 黒駒（ハイライト）の画像のパス */
-	private static final String BLACK_HINT_IMAGE_PATH = "../assets/black_hint.png";
+	/** 白駒（配置可能マス用ヒント）の画像のパス */
+	private static final String WHITE_MOVE_HINT_IMAGE_PATH = "../assets/move_hint_white.png";
+	/** 黒駒（配置可能マス用ヒント）の画像のパス */
+	private static final String BLACK_MOVE_HINT_IMAGE_PATH = "../assets/move_hint_black.png";
 	/** 白駒の画像のパス */
 	private static final String WHITE_STONE_IMAGE_PATH = "../assets/white_stone.jpg";
 	/** 黒駒の画像のパス */
@@ -30,10 +30,10 @@ class GamePanel extends JPanel {
 	private static final String EMPTY_CELL_IMAGE_PATH = "../assets/move_hint_frame.jpg";
 	/** 背景画像のパス */
 	private static final String BACKGROUND_IMAGE_PATH = "../assets/background.png";
-	/** 白駒（ハイライト）の画像 */
-	private static final BufferedImage WHITE_HINT_IMAGE;
-	/** 黒駒（ハイライト）の画像 */
-	private static final BufferedImage BLACK_HINT_IMAGE;
+	/** 白駒（配置可能マス用ヒント）の画像 */
+	private static final BufferedImage WHITE_MOVE_HINT_IMAGE;
+	/** 黒駒（配置可能マス用ヒント）の画像 */
+	private static final BufferedImage BLACK_MOVE_HINT_IMAGE;
 	/** 白駒の画像 */
 	private static final BufferedImage WHITE_STONE_IMAGE;
 	/** 黒駒の画像 */
@@ -45,12 +45,12 @@ class GamePanel extends JPanel {
 
 	static {
 		try {
-			WHITE_HINT_IMAGE = ImageIO.read(Objects.requireNonNull(GamePanel.class.getResource(WHITE_HINT_IMAGE_PATH)));
-			BLACK_HINT_IMAGE = ImageIO.read(Objects.requireNonNull(GamePanel.class.getResource(BLACK_HINT_IMAGE_PATH)));
+			WHITE_MOVE_HINT_IMAGE = ImageIO.read(Objects.requireNonNull(GamePanel.class.getResource(WHITE_MOVE_HINT_IMAGE_PATH)));
+			BLACK_MOVE_HINT_IMAGE = ImageIO.read(Objects.requireNonNull(GamePanel.class.getResource(BLACK_MOVE_HINT_IMAGE_PATH)));
 			WHITE_STONE_IMAGE = ImageIO.read(Objects.requireNonNull(GamePanel.class.getResource(WHITE_STONE_IMAGE_PATH)));
 			BLACK_STONE_IMAGE = ImageIO.read(Objects.requireNonNull(GamePanel.class.getResource(BLACK_STONE_IMAGE_PATH)));
 			EMPTY_CELL_IMAGE = ImageIO.read(Objects.requireNonNull(GamePanel.class.getResource(EMPTY_CELL_IMAGE_PATH)));
-			BACKGROUND_IMAGE = ImageIO.read(Objects.requireNonNull(GamePanel.class.getResourceAsStream(BACKGROUND_IMAGE_PATH)));
+			BACKGROUND_IMAGE = ImageIO.read(Objects.requireNonNull(GamePanel.class.getResource(BACKGROUND_IMAGE_PATH)));
 		} catch (final IOException | NullPointerException e) {
 			throw new RuntimeException("セル画像の読み込みに失敗しました", e);
 		}
@@ -78,10 +78,10 @@ class GamePanel extends JPanel {
 	private ImageIcon blackStoneIcon;
 	/** 空きマスのアイコン */
 	private ImageIcon emptyCellIcon;
-	/** 半透明の白駒のアイコン */
-	private ImageIcon whiteHintIcon;
-	/** 半透明の黒駒のアイコン */
-	private ImageIcon blackHintIcon;
+	/** 白駒のアイコン（配置可能マス表示用ヒント） */
+	private ImageIcon whiteMoveHintIcon;
+	/** 黒駒のアイコン（配置可能マス表示用ヒント） */
+	private ImageIcon blackMoveHintIcon;
 
 	/**
 	 * GamePanelを構築します。
@@ -180,18 +180,18 @@ class GamePanel extends JPanel {
 	}
 
 	/**
-	 * 指定位置に駒を配置します。
+	 * 指定位置に配置可能マスのヒントを設定します。
 	 *
-	 * @param piece 配置する駒
+	 * @param piece 配置した際に裏返る駒の色
 	 * @param i     行インデックス
 	 * @param j     列インデックス
 	 */
 	public void setValidPiece(final Piece piece, final int i, final int j) {
 		board[i][j].putClientProperty(Piece.class, piece);
 		if (piece.isWhite()) {
-			board[i][j].setIcon(whiteHintIcon);
+			board[i][j].setIcon(whiteMoveHintIcon);
 		} else if (piece.isBlack()) {
-			board[i][j].setIcon(blackHintIcon);
+			board[i][j].setIcon(blackMoveHintIcon);
 		} else {
 			board[i][j].setIcon(emptyCellIcon);
 		}
@@ -277,9 +277,9 @@ class GamePanel extends JPanel {
 	 */
 	private void prepareImages(final int cellSize) {
 		whiteStoneIcon = new ImageIcon(WHITE_STONE_IMAGE.getScaledInstance(cellSize, cellSize, Image.SCALE_SMOOTH));
-		whiteHintIcon = new ImageIcon(WHITE_HINT_IMAGE.getScaledInstance(cellSize, cellSize, Image.SCALE_SMOOTH));
+		whiteMoveHintIcon = new ImageIcon(WHITE_MOVE_HINT_IMAGE.getScaledInstance(cellSize, cellSize, Image.SCALE_SMOOTH));
 		blackStoneIcon = new ImageIcon(BLACK_STONE_IMAGE.getScaledInstance(cellSize, cellSize, Image.SCALE_SMOOTH));
-		blackHintIcon = new ImageIcon(BLACK_HINT_IMAGE.getScaledInstance(cellSize, cellSize, Image.SCALE_SMOOTH));
+		blackMoveHintIcon = new ImageIcon(BLACK_MOVE_HINT_IMAGE.getScaledInstance(cellSize, cellSize, Image.SCALE_SMOOTH));
 		emptyCellIcon = new ImageIcon(EMPTY_CELL_IMAGE.getScaledInstance(cellSize, cellSize, Image.SCALE_SMOOTH));
 	}
 
