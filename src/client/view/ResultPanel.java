@@ -12,11 +12,15 @@ import java.util.*;
  * 勝敗結果、スコア、およびホームに戻るボタンを提供します。
  */
 class ResultPanel extends JPanel {
-	// --------------- クラス定数定義 ---------------
-	/** 背景画像 */
-	private static final BufferedImage BACKGROUND_IMAGE;
+	// --------------- クラス定数 ---------------
+	/** ホームボタンの画像のパス */
+	private static final String HOME_IMAGE_PATH = "../assets/home.png";
+	/** 背景画像のパス */
+	private static final String BACKGROUND_IMAGE_PATH = "../assets/background.png";
 	/** ホームボタンの画像 */
 	private static final BufferedImage HOME_IMAGE;
+	/** 背景画像 */
+	private static final BufferedImage BACKGROUND_IMAGE;
 	/** 結果タイトルフォント */
 	private static final Font TITLE_FONT = new Font("Arial", Font.BOLD, 72);
 	/** スコア表示フォント */
@@ -24,8 +28,8 @@ class ResultPanel extends JPanel {
 
 	static {
 		try {
-			BACKGROUND_IMAGE = ImageIO.read(Objects.requireNonNull(ResultPanel.class.getResourceAsStream("../assets/background.png")));
-			HOME_IMAGE = ImageIO.read(Objects.requireNonNull(ResultPanel.class.getResourceAsStream("../assets/home.png")));
+			HOME_IMAGE = ImageIO.read(Objects.requireNonNull(ResultPanel.class.getResourceAsStream(HOME_IMAGE_PATH)));
+			BACKGROUND_IMAGE = ImageIO.read(Objects.requireNonNull(ResultPanel.class.getResourceAsStream(BACKGROUND_IMAGE_PATH)));
 		} catch (final IOException e) {
 			throw new RuntimeException("結果画面の画像読み込みに失敗しました", e);
 		}
@@ -89,7 +93,7 @@ class ResultPanel extends JPanel {
 	 * @param whiteCount 白の駒数
 	 * @param blackCount 黒の駒数
 	 */
-	public void setResult(String result, int whiteCount, int blackCount) {
+	public void setResult(final String result, final int whiteCount, final int blackCount) {
 		this.result = result;
 		this.whiteCount = whiteCount;
 		this.blackCount = blackCount;
@@ -100,7 +104,7 @@ class ResultPanel extends JPanel {
 	 * 背景画像と結果表示を描画します。
 	 */
 	@Override
-	protected void paintComponent(Graphics g) {
+	protected void paintComponent(final Graphics g) {
 		super.paintComponent(g);
 
 		int panelWidth = getWidth();
@@ -194,7 +198,7 @@ class ResultPanel extends JPanel {
 	 *
 	 * @param buttonSize ボタンサイズ
 	 */
-	private void prepareImages(int buttonSize) {
+	private void prepareImages(final int buttonSize) {
 		int pressedSize = (int) (buttonSize * 0.95);
 
 		// ホーム画像の生成
@@ -209,7 +213,7 @@ class ResultPanel extends JPanel {
 	 * @param size   縮小後のサイズ
 	 * @return 視覚効果が適用された画像
 	 */
-	private Image createPressedImage(BufferedImage source, int size) {
+	private Image createPressedImage(final BufferedImage source, final int size) {
 		Image scaled = source.getScaledInstance(size, size, Image.SCALE_SMOOTH);
 		BufferedImage result = new BufferedImage(size, size, BufferedImage.TYPE_INT_ARGB);
 		Graphics2D g2d = result.createGraphics();
@@ -227,7 +231,7 @@ class ResultPanel extends JPanel {
 	 * @param pressedImage 押下時の画像
 	 * @param buttonSize   ボタンサイズ
 	 */
-	private void initButton(JButton button, ImageIcon normalImage, ImageIcon pressedImage, int buttonSize) {
+	private void initButton(final JButton button, final ImageIcon normalImage, final ImageIcon pressedImage, final int buttonSize) {
 		Dimension size = new Dimension(buttonSize, buttonSize);
 
 		// ボタンの基本設定

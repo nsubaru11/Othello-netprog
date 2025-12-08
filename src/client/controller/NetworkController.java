@@ -6,6 +6,10 @@ import model.*;
 import java.io.*;
 import java.net.*;
 
+/**
+ * 通信を管理するクラスです。
+ * TODO: Javadocコメントを付与する。
+ */
 public class NetworkController {
 	private static final int DEFAULT_PORT = 10000;
 	private static final String DEFAULT_HOST = "localhost";

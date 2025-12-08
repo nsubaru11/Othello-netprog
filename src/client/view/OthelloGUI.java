@@ -7,7 +7,6 @@ import javax.imageio.*;
 import javax.swing.*;
 import java.awt.*;
 import java.io.*;
-import java.net.*;
 import java.util.*;
 
 /**
@@ -15,7 +14,7 @@ import java.util.*;
  * CardLayoutを使用して画面の切り替えを行います。
  */
 public class OthelloGUI extends JFrame {
-	// --------------- クラス定数定義 ---------------
+	// --------------- クラス定数 ---------------
 	/** アプリケーションアイコンの画像 */
 	private static final Image ICON_IMAGE;
 	/** アプリケーションアイコンの画像パス */
@@ -34,12 +33,9 @@ public class OthelloGUI extends JFrame {
 		// アイコンは読み込み失敗してもアプリ動作には影響しないため、ログ出力のみで続行
 		Image image = null;
 		try {
-			URL imageUrl = OthelloGUI.class.getResource(ICON_IMAGE_PATH);
-			image = ImageIO.read(Objects.requireNonNull(imageUrl, "アイコン画像が見つかりません: " + ICON_IMAGE_PATH));
-		} catch (final IOException e) {
-			System.err.println("アイコン画像のI/Oエラーで読み込みに失敗しました。");
-		} catch (final NullPointerException e) {
-			System.err.println(e.getMessage());
+			image = ImageIO.read(Objects.requireNonNull(OthelloGUI.class.getResourceAsStream(ICON_IMAGE_PATH)));
+		} catch (final IOException | NullPointerException e) {
+			System.err.println("アイコン画像の読み込みに失敗しました。\n" + e);
 		}
 		ICON_IMAGE = image;
 	}
@@ -53,11 +49,12 @@ public class OthelloGUI extends JFrame {
 	private final LoadPanel loadPanel;
 	/** ホーム画面パネル */
 	private final HomePanel homePanel;
-	/** 結果画面パネル */
-	private final ResultPanel resultPanel;
 	/** マッチング設定パネル */
 	private final MatchingPanel matchingPanel;
-	/** ゲーム画面パネル */
+	/** 結果画面パネル */
+	private final ResultPanel resultPanel;
+
+	/** ゲーム画面パネル（各ゲームごとに作成するため`final`でない） */
 	private GamePanel gamePanel;
 	/** ゲームコントローラー */
 	private GameController controller;
@@ -99,10 +96,6 @@ public class OthelloGUI extends JFrame {
 		showLoad();
 	}
 
-	public GameController getController() {
-		return controller;
-	}
-
 	/**
 	 * ロード画面を表示し、プログレスバーを開始します。
 	 */
@@ -119,28 +112,6 @@ public class OthelloGUI extends JFrame {
 	}
 
 	/**
-	 * ゲーム画面を表示します。
-	 */
-	public void showGame() {
-		cardLayout.show(cardPanel, CARD_GAME);
-	}
-
-	public void showMessage(String text) {
-		gamePanel.showMessage(text);
-	}
-
-	/**
-	 * 結果画面を表示します。
-	 *
-	 * @param whiteCount 白の駒数
-	 * @param blackCount 黒の駒数
-	 */
-	public void showResult(String result, int whiteCount, int blackCount) {
-		resultPanel.setResult(result, whiteCount, blackCount);
-		cardLayout.show(cardPanel, CARD_RESULT);
-	}
-
-	/**
 	 * マッチング設定パネルをオーバーレイ表示します。
 	 */
 	public void showMatchingPanel() {
@@ -153,6 +124,22 @@ public class OthelloGUI extends JFrame {
 	}
 
 	/**
+	 * ゲームを開始します。
+	 *
+	 * @param userName  ユーザー名
+	 * @param boardSize ボードサイズ
+	 */
+	public void startGame(final String userName, final int boardSize) {
+		hideMatchingPanel();
+		// ここで`GameController`, `GamePanel`を作成
+		controller = new GameController(this, userName, boardSize);
+		gamePanel = new GamePanel(this, controller, boardSize);
+		cardPanel.add(gamePanel, CARD_GAME);
+		controller.connect();
+		showGame();
+	}
+
+	/**
 	 * マッチング設定パネルを非表示にします。
 	 */
 	public void hideMatchingPanel() {
@@ -161,22 +148,42 @@ public class OthelloGUI extends JFrame {
 		repaint();
 	}
 
-	public void setPiece(Piece piece, int i, int j) {
+	/**
+	 * ゲーム画面を表示します。
+	 */
+	public void showGame() {
+		cardLayout.show(cardPanel, CARD_GAME);
+	}
+
+	/**
+	 * ゲーム画面に文字列を表示します。（TODO: この実装あんま良くない）
+	 * @param text 表示する文字列
+	 */
+	public void showMessage(final String text) {
+		gamePanel.showMessage(text);
+	}
+
+	/**
+	 * ゲーム画面のセルを更新します。（TODO: この実装あんま良くない2）
+	 *
+	 * @param piece 石の色
+	 * @param i     行
+	 * @param j     列
+	 */
+	public void setPiece(final Piece piece, final int i, final int j) {
 		gamePanel.setPiece(piece, i, j);
 	}
 
 	/**
-	 * ゲームを開始します。
+	 * 結果画面を表示します。
 	 *
-	 * @param userName  ユーザー名
-	 * @param boardSize ボードサイズ
+	 * @param result 結果の文字列
+	 * @param whiteCount 白の駒数
+	 * @param blackCount 黒の駒数
 	 */
-	public void startGame(String userName, int boardSize) {
-		hideMatchingPanel();
-		controller = new GameController(this, userName, boardSize);
-		gamePanel = new GamePanel(this, controller, boardSize);
-		cardPanel.add(gamePanel, CARD_GAME);
-		controller.connect();
-		showGame();
+	public void showResult(final String result, final int whiteCount, final int blackCount) {
+		resultPanel.setResult(result, whiteCount, blackCount);
+		cardLayout.show(cardPanel, CARD_RESULT);
 	}
+
 }

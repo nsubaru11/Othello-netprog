@@ -13,7 +13,7 @@ import java.util.*;
  * ロード完了後にホーム画面へ遷移します。
  */
 class LoadPanel extends JPanel {
-	// --------------- クラス定数定義 ---------------
+	// --------------- クラス定数 ---------------
 	/** 背景画像のパス */
 	private static final String BACKGROUND_IMAGE_PATH = "../assets/background.png";
 	/** 背景画像 */
@@ -38,6 +38,7 @@ class LoadPanel extends JPanel {
 	private final JProgressBar progressBar;
 	/** アニメーション用タイマー */
 	private final Timer timer;
+
 	/** 現在の進捗値 */
 	private int progress = 0;
 
@@ -80,10 +81,10 @@ class LoadPanel extends JPanel {
 	}
 
 	/**
-	 * 背景画像と影付きタイトルを描画します。
+	 * 背景画像と影付きタイトルを描画します。（TODO: このコードめっちゃ重複してる）
 	 */
 	@Override
-	protected void paintComponent(Graphics g) {
+	protected void paintComponent(final Graphics g) {
 		super.paintComponent(g);
 
 		int panelWidth = getWidth();

@@ -14,9 +14,18 @@ import java.util.*;
 /**
  * オセロゲームのゲーム画面を表示するパネルです。
  * ゲームボードの描画と駒の配置を管理します。
+ * TODO: リセットボタンの作成
  */
 class GamePanel extends JPanel {
-	// --------------- クラス定数定義 ---------------
+	// --------------- クラス定数 ---------------
+	/** 白駒の画像のパス */
+	private static final String WHITE_IMAGE_PATH = "../assets/white.jpg";
+	/** 黒駒の画像のパス */
+	private static final String BLACK_IMAGE_PATH = "../assets/black.jpg";
+	/** 空きマスの画像のパス */
+	private static final String GREEN_FRAME_IMAGE_PATH = "../assets/greenFrame.jpg";
+	/** 背景画像のパス */
+	private static final String BACKGROUND_IMAGE_PATH = "../assets/background.png";
 	/** 白駒の画像 */
 	private static final BufferedImage WHITE_IMAGE;
 	/** 黒駒の画像 */
@@ -28,11 +37,11 @@ class GamePanel extends JPanel {
 
 	static {
 		try {
-			WHITE_IMAGE = ImageIO.read(Objects.requireNonNull(GamePanel.class.getResource("../assets/white.jpg")));
-			BLACK_IMAGE = ImageIO.read(Objects.requireNonNull(GamePanel.class.getResource("../assets/black.jpg")));
-			GREEN_FRAME_IMAGE = ImageIO.read(Objects.requireNonNull(GamePanel.class.getResource("../assets/greenFrame.jpg")));
-			BACKGROUND_IMAGE = ImageIO.read(Objects.requireNonNull(GamePanel.class.getResourceAsStream("../assets/background.png")));
-		} catch (final IOException e) {
+			WHITE_IMAGE = ImageIO.read(Objects.requireNonNull(GamePanel.class.getResource(WHITE_IMAGE_PATH)));
+			BLACK_IMAGE = ImageIO.read(Objects.requireNonNull(GamePanel.class.getResource(BLACK_IMAGE_PATH)));
+			GREEN_FRAME_IMAGE = ImageIO.read(Objects.requireNonNull(GamePanel.class.getResource(GREEN_FRAME_IMAGE_PATH)));
+			BACKGROUND_IMAGE = ImageIO.read(Objects.requireNonNull(GamePanel.class.getResourceAsStream(BACKGROUND_IMAGE_PATH)));
+		} catch (final IOException | NullPointerException e) {
 			throw new RuntimeException("セル画像の読み込みに失敗しました", e);
 		}
 	}
@@ -120,7 +129,11 @@ class GamePanel extends JPanel {
 		setPiece(Piece.WHITE, half, half);
 	}
 
-	public void showMessage(String message) {
+	/**
+	 * 画面上部にメッセージを表示します。
+	 * @param message 表示するメッセージ
+	 */
+	public void showMessage(final String message) {
 		titleLabel.setText(message);
 		repaint();
 	}
@@ -132,6 +145,57 @@ class GamePanel extends JPanel {
 	public void removeNotify() {
 		super.removeNotify();
 		removeComponentListener(componentListener);
+	}
+
+	/**
+	 * 指定位置に駒を配置します。
+	 *
+	 * @param piece 配置する駒
+	 * @param i     行インデックス
+	 * @param j     列インデックス
+	 */
+	public void setPiece(final Piece piece, final int i, final int j) {
+		board[i][j].putClientProperty(Piece.class, piece);
+		if (piece.isWhite()) {
+			board[i][j].setIcon(whiteCellIcon);
+		} else if (piece.isBlack()) {
+			board[i][j].setIcon(blackCellIcon);
+		} else {
+			board[i][j].setIcon(greenCellIcon);
+		}
+	}
+
+	/**
+	 * 背景画像を描画します。
+	 */
+	@Override
+	protected void paintComponent(final Graphics g) {
+		super.paintComponent(g);
+
+		int panelWidth = getWidth();
+		int panelHeight = getHeight();
+		int imageWidth = BACKGROUND_IMAGE.getWidth();
+		int imageHeight = BACKGROUND_IMAGE.getHeight();
+		double imageAspect = (double) imageWidth / imageHeight;
+		double panelAspect = (double) panelWidth / panelHeight;
+
+		// 背景画像を描画
+		int drawWidth, drawHeight;
+		int imgX, imgY;
+		if (panelAspect > imageAspect) {
+			// パネルの方が横長 → 横幅を合わせて縦をトリミング
+			drawWidth = panelWidth;
+			drawHeight = (int) (panelWidth / imageAspect);
+			imgX = 0;
+			imgY = (panelHeight - drawHeight) / 2;
+		} else {
+			// パネルの方が縦長 → 縦幅を合わせて横をトリミング
+			drawHeight = panelHeight;
+			drawWidth = (int) (panelHeight * imageAspect);
+			imgY = 0;
+			imgX = (panelWidth - drawWidth) / 2;
+		}
+		g.drawImage(BACKGROUND_IMAGE, imgX, imgY, drawWidth, drawHeight, this);
 	}
 
 	/**
@@ -174,63 +238,12 @@ class GamePanel extends JPanel {
 	}
 
 	/**
-	 * 指定位置に駒を配置します。
-	 *
-	 * @param piece 配置する駒
-	 * @param i     行インデックス
-	 * @param j     列インデックス
-	 */
-	public void setPiece(Piece piece, int i, int j) {
-		board[i][j].putClientProperty(Piece.class, piece);
-		if (piece.isWhite()) {
-			board[i][j].setIcon(whiteCellIcon);
-		} else if (piece.isBlack()) {
-			board[i][j].setIcon(blackCellIcon);
-		} else {
-			board[i][j].setIcon(greenCellIcon);
-		}
-	}
-
-	/**
-	 * 背景画像を描画します。
-	 */
-	@Override
-	protected void paintComponent(Graphics g) {
-		super.paintComponent(g);
-
-		int panelWidth = getWidth();
-		int panelHeight = getHeight();
-		int imageWidth = BACKGROUND_IMAGE.getWidth();
-		int imageHeight = BACKGROUND_IMAGE.getHeight();
-		double imageAspect = (double) imageWidth / imageHeight;
-		double panelAspect = (double) panelWidth / panelHeight;
-
-		// 背景画像を描画
-		int drawWidth, drawHeight;
-		int imgX, imgY;
-		if (panelAspect > imageAspect) {
-			// パネルの方が横長 → 横幅を合わせて縦をトリミング
-			drawWidth = panelWidth;
-			drawHeight = (int) (panelWidth / imageAspect);
-			imgX = 0;
-			imgY = (panelHeight - drawHeight) / 2;
-		} else {
-			// パネルの方が縦長 → 縦幅を合わせて横をトリミング
-			drawHeight = panelHeight;
-			drawWidth = (int) (panelHeight * imageAspect);
-			imgY = 0;
-			imgX = (panelWidth - drawWidth) / 2;
-		}
-		g.drawImage(BACKGROUND_IMAGE, imgX, imgY, drawWidth, drawHeight, this);
-	}
-
-	/**
 	 * ボタン用の画像を事前生成してキャッシュします。
 	 * パフォーマンス最適化のため、クリックごとの画像生成を回避します。
 	 *
 	 * @param cellSize ボタンサイズ
 	 */
-	private void prepareImages(int cellSize) {
+	private void prepareImages(final int cellSize) {
 		whiteCellIcon = new ImageIcon(WHITE_IMAGE.getScaledInstance(cellSize, cellSize, Image.SCALE_SMOOTH));
 		blackCellIcon = new ImageIcon(BLACK_IMAGE.getScaledInstance(cellSize, cellSize, Image.SCALE_SMOOTH));
 		greenCellIcon = new ImageIcon(GREEN_FRAME_IMAGE.getScaledInstance(cellSize, cellSize, Image.SCALE_SMOOTH));
@@ -243,7 +256,7 @@ class GamePanel extends JPanel {
 	 * @param j           初期化するセルの列インデックス
 	 * @param normalImage 通常時の画像
 	 */
-	private void initButton(int i, int j, ImageIcon normalImage) {
+	private void initButton(final int i, final int j, final ImageIcon normalImage) {
 		JButton button = board[i][j];
 		// ボタンの基本設定（枠線を消し、透明化）
 		button.putClientProperty(Piece.class, Piece.EMPTY);

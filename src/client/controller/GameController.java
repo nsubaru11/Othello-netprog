@@ -6,6 +6,10 @@ import model.*;
 import javax.swing.*;
 import java.util.*;
 
+/**
+ * ゲームの進行およびボードの状態を管理します。
+ * TODO: Javadocコメントを付与する。
+ */
 public class GameController implements NetworkListener {
 	private final OthelloGUI gui;
 	private final NetworkController networkController;
@@ -28,6 +32,7 @@ public class GameController implements NetworkListener {
 	}
 
 	public void setPiece(int i, int j) {
+		// 選択したマスに駒が置ける場合NetworkControllerに伝達
 		if (currentTurn != myColor) return;
 		if (!board.canSet(currentTurn, i, j)) return;
 		networkController.sendMove(i, j);
@@ -58,6 +63,7 @@ public class GameController implements NetworkListener {
 	}
 
 	public void onMoveAccepted(int i, int j) {
+		// 自分または相手が駒を正しく置いたときに呼ばれる
 		System.out.println("手が受理されました: (" + i + ", " + j + ")");
 		placePiece(i, j);
 		List<Integer> validCells = board.getValidCells(currentTurn).get(i * boardSize + j);

@@ -9,7 +9,7 @@ import java.awt.*;
  * ユーザー名の入力、ボードサイズの選択、開始/キャンセルボタンを提供します。
  */
 class MatchingPanel extends JPanel {
-	// --------------- クラス定数定義 ---------------
+	// --------------- クラス定数 ---------------
 	/** ボードサイズの選択肢 */
 	private static final Integer[] BOARD_SIZES = {6, 8, 10, 12};
 
@@ -24,6 +24,7 @@ class MatchingPanel extends JPanel {
 	private final JButton startButton;
 	/** キャンセルボタン */
 	private final JButton cancelButton;
+
 	/** ユーザーネームのキャッシュ */
 	private String userName = "";
 
@@ -122,6 +123,25 @@ class MatchingPanel extends JPanel {
 	}
 
 	/**
+	 * パネル表示時に入力フィールドをリセットします。
+	 */
+	public void reset() {
+		userNameField.setText(userName);
+		boardSizeComboBox.setSelectedItem(8);
+		userNameField.requestFocusInWindow();
+	}
+
+	/**
+	 * 半透明のオーバーレイ背景を描画します。
+	 */
+	@Override
+	protected void paintComponent(final Graphics g) {
+		super.paintComponent(g);
+		g.setColor(new Color(0, 0, 0, 150));
+		g.fillRect(0, 0, getWidth(), getHeight());
+	}
+
+	/**
 	 * ダイアログパネルを作成します。
 	 *
 	 * @return ダイアログパネル
@@ -129,7 +149,7 @@ class MatchingPanel extends JPanel {
 	private JPanel createDialogPanel() {
 		JPanel panel = new JPanel() {
 			@Override
-			protected void paintComponent(Graphics g) {
+			protected void paintComponent(final Graphics g) {
 				super.paintComponent(g);
 				Graphics2D g2d = (Graphics2D) g;
 				g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
@@ -156,7 +176,7 @@ class MatchingPanel extends JPanel {
 	 * @param color ボタンの背景色
 	 * @return スタイル付きボタン
 	 */
-	private JButton createStyledButton(String text, Color color) {
+	private JButton createStyledButton(final String text, final Color color) {
 		JButton button = new JButton(text);
 		button.setFont(new Font("Arial", Font.BOLD, 14));
 		button.setForeground(Color.WHITE);
@@ -186,16 +206,6 @@ class MatchingPanel extends JPanel {
 	}
 
 	/**
-	 * 半透明のオーバーレイ背景を描画します。
-	 */
-	@Override
-	protected void paintComponent(Graphics g) {
-		super.paintComponent(g);
-		g.setColor(new Color(0, 0, 0, 150));
-		g.fillRect(0, 0, getWidth(), getHeight());
-	}
-
-	/**
 	 * 開始ボタンクリック時の処理です。
 	 */
 	private void onStartClicked() {
@@ -217,15 +227,6 @@ class MatchingPanel extends JPanel {
 	 */
 	private void onCancelClicked() {
 		gui.hideMatchingPanel();
-	}
-
-	/**
-	 * パネル表示時に入力フィールドをリセットします。
-	 */
-	public void reset() {
-		userNameField.setText(userName);
-		boardSizeComboBox.setSelectedItem(8);
-		userNameField.requestFocusInWindow();
 	}
 
 }

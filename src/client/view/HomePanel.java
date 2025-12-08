@@ -13,7 +13,13 @@ import java.util.*;
  * 背景画像、タイトル、およびゲーム開始・終了ボタンを提供します。
  */
 class HomePanel extends JPanel {
-	// --------------- クラス定数定義 ---------------
+	// --------------- クラス定数 ---------------
+	/** スタートボタンの画像のパス */
+	private static final String START_IMAGE_PATH = "../assets/start.png";
+	/** 終了ボタンの画像のパス */
+	private static final String FINISH_IMAGE_PATH = "../assets/finish.png";
+	/** 背景画像のパス */
+	private static final String BACKGROUND_IMAGE_PATH = "../assets/background.png";
 	/** スタートボタンの画像 */
 	private static final BufferedImage START_IMAGE;
 	/** 終了ボタンの画像 */
@@ -27,10 +33,10 @@ class HomePanel extends JPanel {
 
 	static {
 		try {
-			START_IMAGE = ImageIO.read(Objects.requireNonNull(HomePanel.class.getResourceAsStream("../assets/start.png")));
-			FINISH_IMAGE = ImageIO.read(Objects.requireNonNull(HomePanel.class.getResourceAsStream("../assets/finish.png")));
-			BACKGROUND_IMAGE = ImageIO.read(Objects.requireNonNull(HomePanel.class.getResourceAsStream("../assets/background.png")));
-		} catch (final IOException e) {
+			START_IMAGE = ImageIO.read(Objects.requireNonNull(HomePanel.class.getResourceAsStream(START_IMAGE_PATH)));
+			FINISH_IMAGE = ImageIO.read(Objects.requireNonNull(HomePanel.class.getResourceAsStream(FINISH_IMAGE_PATH)));
+			BACKGROUND_IMAGE = ImageIO.read(Objects.requireNonNull(HomePanel.class.getResourceAsStream(BACKGROUND_IMAGE_PATH)));
+		} catch (final IOException | NullPointerException e) {
 			throw new RuntimeException("ボタン画像の読み込みに失敗しました", e);
 		}
 	}
@@ -102,7 +108,7 @@ class HomePanel extends JPanel {
 	 * 背景画像と影付きタイトルを描画します。
 	 */
 	@Override
-	protected void paintComponent(Graphics g) {
+	protected void paintComponent(final Graphics g) {
 		super.paintComponent(g);
 
 		int panelWidth = getWidth();
@@ -154,7 +160,7 @@ class HomePanel extends JPanel {
 	 *
 	 * @param buttonSize ボタンサイズ
 	 */
-	private void prepareImages(int buttonSize) {
+	private void prepareImages(final int buttonSize) {
 		int pressedSize = (int) (buttonSize * 0.95);
 
 		// スタート画像の生成
@@ -167,14 +173,14 @@ class HomePanel extends JPanel {
 	}
 
 	/**
-	 * 押下時の視覚効果用画像を生成します。
+	 * 押下時の画像を生成します。
 	 * サイズ縮小と半透明化を適用します。
 	 *
 	 * @param source 元画像
 	 * @param size   縮小後のサイズ
-	 * @return 視覚効果が適用された画像
+	 * @return 押下時の画像
 	 */
-	private Image createPressedImage(BufferedImage source, int size) {
+	private Image createPressedImage(final BufferedImage source, final int size) {
 		Image scaled = source.getScaledInstance(size, size, Image.SCALE_SMOOTH);
 		BufferedImage result = new BufferedImage(size, size, BufferedImage.TYPE_INT_ARGB);
 		Graphics2D g2d = result.createGraphics();
@@ -192,7 +198,7 @@ class HomePanel extends JPanel {
 	 * @param pressedImage 押下時の画像
 	 * @param buttonSize   ボタンサイズ
 	 */
-	private void initButton(JButton button, ImageIcon normalImage, ImageIcon pressedImage, int buttonSize) {
+	private void initButton(final JButton button, final ImageIcon normalImage, final ImageIcon pressedImage, final int buttonSize) {
 		Dimension size = new Dimension(buttonSize, buttonSize);
 
 		// ボタンの基本設定（枠線を消し、透明化）

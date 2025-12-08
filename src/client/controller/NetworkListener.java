@@ -2,6 +2,9 @@ package client.controller;
 
 import model.*;
 
+/**
+ * NetworkControllerとGameControllerが循環参照にならないためのインターフェース
+ */
 public interface NetworkListener {
 	void onGameStart(Piece assignedColor);
 
