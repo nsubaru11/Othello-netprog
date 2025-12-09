@@ -17,7 +17,7 @@ Java SwingとSocket通信を使用した、ネットワーク対戦型オセロ�
 - Java Development Kit (JDK) 8 以上
 - Windows / macOS / Linux
 
-## 🚀 実行方法
+## 実行方法
 
 プロジェクトには起動用のバッチスクリプトが含まれています。
 
@@ -44,7 +44,7 @@ scripts\start_client.bat
 3. **User Name**（プレイヤー名）を入力し、**Board Size**（盤面サイズ）を選択して **Start** を押します。
 4. サーバー側で同じ盤面サイズを選択したプレイヤーが見つかると、自動的にゲームが開始されます。
 
-## 📂 ディレクトリ構成
+## ディレクトリ構成
 
 ```text
 othello-netprog/
@@ -66,7 +66,7 @@ othello-netprog/
 └── README.md
 ```
 
-## 🛠 技術仕様
+## 技術仕様
 
 ### 通信プロトコル
 
