@@ -13,7 +13,7 @@ public final class Board {
 			{-1, 0}, {1, 0}     // 上-下
 	};
 	private final int size;
-	private final Cell[][] board;
+	private final Piece[][] board;
 	private final Map<Integer, List<Integer>> whiteValidCells = new HashMap<>();
 	private final Map<Integer, List<Integer>> blackValidCells = new HashMap<>();
 	private int whiteCount = 0, blackCount = 0;
@@ -24,8 +24,8 @@ public final class Board {
 	public Board(final int size) {
 		if (size < 6 || size % 2 == 1) throw new IllegalArgumentException();
 		this.size = size;
-		board = new Cell[size][size];
-		for (int i = 0; i < size; i++) Arrays.setAll(board[i], j -> new Cell());
+		board = new Piece[size][size];
+		for (int i = 0; i < size; i++) Arrays.fill(board[i], Piece.EMPTY);
 		initializeBoard();
 	}
 
@@ -49,7 +49,8 @@ public final class Board {
 	}
 
 	public Map<Integer, List<Integer>> getValidCells(final Piece piece) {
-		return piece.isWhite() ? whiteValidCells : blackValidCells;
+		Map<Integer, List<Integer>> validCells = piece.isWhite() ? whiteValidCells : blackValidCells;
+		return Collections.unmodifiableMap(validCells); // 読み取り専用にして返す
 	}
 
 	public void updateValidMoves() {
@@ -57,7 +58,7 @@ public final class Board {
 		blackValidCells.clear();
 		for (int i = 0; i < size; i++) {
 			for (int j = 0; j < size; j++) {
-				Piece piece = board[i][j].getPiece();
+				Piece piece = board[i][j];
 				if (!piece.isEmpty()) continue;
 				for (int[] d : directions) {
 					int di = d[0], dj = d[1];
@@ -78,15 +79,15 @@ public final class Board {
 	}
 
 	private boolean cannotMove(int i, int j, final Piece piece, final int di, final int dj) {
-		while (isInBounds(i, j) && piece.isOpponentPiece(board[i][j].getPiece())) {
+		while (isInBounds(i, j) && piece.isOpponentPiece(board[i][j])) {
 			i += di;
 			j += dj;
 		}
-		return !isInBounds(i, j) || !piece.isMyPiece(board[i][j].getPiece());
+		return !isInBounds(i, j) || !piece.isMyPiece(board[i][j]);
 	}
 
 	private void addValidCells(int i, int j, final int di, final int dj, Piece piece, List<Integer> list) {
-		while (board[i][j].getPiece() == piece) {
+		while (board[i][j] == piece) {
 			list.add(i * size + j);
 			i += di;
 			j += dj;
@@ -119,13 +120,13 @@ public final class Board {
 	public void placeWhite(final int i, final int j) {
 		if (board[i][j].isBlack()) blackCount--;
 		whiteCount++;
-		board[i][j].setPiece(Piece.WHITE);
+		board[i][j] = Piece.WHITE;
 	}
 
 	public void placeBlack(final int i, final int j) {
 		if (board[i][j].isWhite()) whiteCount--;
 		blackCount++;
-		board[i][j].setPiece(Piece.BLACK);
+		board[i][j] = Piece.BLACK;
 	}
 
 	public boolean canSet(Piece player, int i, int j) {
