@@ -11,16 +11,12 @@ import java.util.*;
  * ゲーム終了後の結果画面を表示するパネルです。
  * 勝敗結果、スコア、およびホームに戻るボタンを提供します。
  */
-class ResultPanel extends JPanel {
+class ResultPanel extends BaseBackgroundPanel {
 	// --------------- クラス定数 ---------------
 	/** ホームボタンの画像のパス */
 	private static final String HOME_IMAGE_PATH = "../assets/home.png";
-	/** 背景画像のパス */
-	private static final String BACKGROUND_IMAGE_PATH = "../assets/background.png";
 	/** ホームボタンの画像 */
 	private static final BufferedImage HOME_IMAGE;
-	/** 背景画像 */
-	private static final BufferedImage BACKGROUND_IMAGE;
 	/** 結果タイトルフォント */
 	private static final Font TITLE_FONT = new Font("Arial", Font.BOLD, 72);
 	/** スコア表示フォント */
@@ -29,7 +25,6 @@ class ResultPanel extends JPanel {
 	static {
 		try {
 			HOME_IMAGE = ImageIO.read(Objects.requireNonNull(ResultPanel.class.getResourceAsStream(HOME_IMAGE_PATH)));
-			BACKGROUND_IMAGE = ImageIO.read(Objects.requireNonNull(ResultPanel.class.getResourceAsStream(BACKGROUND_IMAGE_PATH)));
 		} catch (final IOException e) {
 			throw new RuntimeException("結果画面の画像読み込みに失敗しました", e);
 		}
@@ -109,26 +104,6 @@ class ResultPanel extends JPanel {
 
 		int panelWidth = getWidth();
 		int panelHeight = getHeight();
-		int imageWidth = BACKGROUND_IMAGE.getWidth();
-		int imageHeight = BACKGROUND_IMAGE.getHeight();
-		double imageAspect = (double) imageWidth / imageHeight;
-		double panelAspect = (double) panelWidth / panelHeight;
-
-		// 背景画像を描画
-		int drawWidth, drawHeight;
-		int imgX, imgY;
-		if (panelAspect > imageAspect) {
-			drawWidth = panelWidth;
-			drawHeight = (int) (panelWidth / imageAspect);
-			imgX = 0;
-			imgY = (panelHeight - drawHeight) / 2;
-		} else {
-			drawHeight = panelHeight;
-			drawWidth = (int) (panelHeight * imageAspect);
-			imgY = 0;
-			imgX = (panelWidth - drawWidth) / 2;
-		}
-		g.drawImage(BACKGROUND_IMAGE, imgX, imgY, drawWidth, drawHeight, this);
 
 		// Graphics2Dの設定
 		Graphics2D g2d = (Graphics2D) g;

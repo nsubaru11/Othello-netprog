@@ -16,7 +16,7 @@ import java.util.*;
  * ゲームボードの描画と駒の配置を管理します。
  * TODO: リセットボタンの作成
  */
-class GamePanel extends JPanel {
+class GamePanel extends BaseBackgroundPanel {
 	// --------------- クラス定数 ---------------
 	/** 白駒（配置可能マス用ヒント）の画像のパス */
 	private static final String WHITE_MOVE_HINT_IMAGE_PATH = "../assets/move_hint_white.png";
@@ -28,8 +28,6 @@ class GamePanel extends JPanel {
 	private static final String BLACK_STONE_IMAGE_PATH = "../assets/black_stone.jpg";
 	/** 空きマスの画像のパス */
 	private static final String EMPTY_CELL_IMAGE_PATH = "../assets/move_hint_frame.jpg";
-	/** 背景画像のパス */
-	private static final String BACKGROUND_IMAGE_PATH = "../assets/background.png";
 	/** 白駒（配置可能マス用ヒント）の画像 */
 	private static final BufferedImage WHITE_MOVE_HINT_IMAGE;
 	/** 黒駒（配置可能マス用ヒント）の画像 */
@@ -40,8 +38,6 @@ class GamePanel extends JPanel {
 	private static final BufferedImage BLACK_STONE_IMAGE;
 	/** 空きマスの画像 */
 	private static final BufferedImage EMPTY_CELL_IMAGE;
-	/** 背景画像 */
-	private static final BufferedImage BACKGROUND_IMAGE;
 	/** 白駒（配置可能マス用ヒント）の文字列 */
 	private static final String WHITE_MOVE_HINT = "WHITE_MOVE_HINT";
 	/** 黒駒（配置可能マス用ヒント）の文字列 */
@@ -60,7 +56,6 @@ class GamePanel extends JPanel {
 			WHITE_STONE_IMAGE = ImageIO.read(Objects.requireNonNull(GamePanel.class.getResource(WHITE_STONE_IMAGE_PATH)));
 			BLACK_STONE_IMAGE = ImageIO.read(Objects.requireNonNull(GamePanel.class.getResource(BLACK_STONE_IMAGE_PATH)));
 			EMPTY_CELL_IMAGE = ImageIO.read(Objects.requireNonNull(GamePanel.class.getResource(EMPTY_CELL_IMAGE_PATH)));
-			BACKGROUND_IMAGE = ImageIO.read(Objects.requireNonNull(GamePanel.class.getResource(BACKGROUND_IMAGE_PATH)));
 		} catch (final IOException | NullPointerException e) {
 			throw new RuntimeException("セル画像の読み込みに失敗しました", e);
 		}
@@ -211,39 +206,6 @@ class GamePanel extends JPanel {
 			button.setIcon(emptyCellIcon);
 			button.putClientProperty(Piece.class, EMPTY_CELL);
 		}
-	}
-
-	/**
-	 * 背景画像を描画します。
-	 */
-	@Override
-	protected void paintComponent(final Graphics g) {
-		super.paintComponent(g);
-
-		int panelWidth = getWidth();
-		int panelHeight = getHeight();
-		int imageWidth = BACKGROUND_IMAGE.getWidth();
-		int imageHeight = BACKGROUND_IMAGE.getHeight();
-		double imageAspect = (double) imageWidth / imageHeight;
-		double panelAspect = (double) panelWidth / panelHeight;
-
-		// 背景画像を描画
-		int drawWidth, drawHeight;
-		int imgX, imgY;
-		if (panelAspect > imageAspect) {
-			// パネルの方が横長 → 横幅を合わせて縦をトリミング
-			drawWidth = panelWidth;
-			drawHeight = (int) (panelWidth / imageAspect);
-			imgX = 0;
-			imgY = (panelHeight - drawHeight) / 2;
-		} else {
-			// パネルの方が縦長 → 縦幅を合わせて横をトリミング
-			drawHeight = panelHeight;
-			drawWidth = (int) (panelHeight * imageAspect);
-			imgY = 0;
-			imgX = (panelWidth - drawWidth) / 2;
-		}
-		g.drawImage(BACKGROUND_IMAGE, imgX, imgY, drawWidth, drawHeight, this);
 	}
 
 	/**

@@ -5,7 +5,7 @@ import model.*;
 
 import java.util.*;
 
-public class GameRoom {
+class GameRoom {
 	private static int roomIdCounter = 0;
 
 	private final int roomId;
