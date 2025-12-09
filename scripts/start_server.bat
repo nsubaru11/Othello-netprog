@@ -1,5 +1,4 @@
 @echo off
-chcp 65001 > nul
 echo Starting Othello Server...
 
 rem パスをクォート付きで保持
