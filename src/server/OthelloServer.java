@@ -4,7 +4,7 @@ import java.io.*;
 import java.net.*;
 import java.util.*;
 
-public class OthelloServer {
+class OthelloServer {
 	private static final int DEFAULT_PORT = 10000;
 	private final HashMap<Integer, Queue<ClientHandler>> waitingPlayers;
 	private ServerSocket serverSocket;

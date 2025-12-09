@@ -5,7 +5,7 @@ import common.*;
 import java.io.*;
 import java.net.*;
 
-public class ClientHandler extends Thread {
+class ClientHandler extends Thread {
 	private final Socket socket;
 	private final PrintWriter out;
 	private final BufferedReader in;

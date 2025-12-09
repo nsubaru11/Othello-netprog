@@ -10,7 +10,7 @@ import java.net.*;
  * 通信を管理するクラスです。
  * TODO: Javadocコメントを付与する。
  */
-public class NetworkController {
+class NetworkController {
 	private static final int DEFAULT_PORT = 10000;
 	// private static final String DEFAULT_HOST = "133.42.227.142";
 	private static final String DEFAULT_HOST = "localhost";
