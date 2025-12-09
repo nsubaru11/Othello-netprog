@@ -34,7 +34,7 @@ public class GameController implements NetworkListener {
 	public void setPiece(int i, int j) {
 		// 選択したマスに駒が置ける場合NetworkControllerに伝達
 		if (currentTurn != myColor) return;
-		if (!board.canSet(currentTurn, i, j)) return;
+		if (!board.isValidMove(currentTurn, i, j)) return;
 		networkController.sendMove(i, j);
 		System.out.println("手を送信: (" + i + ", " + j + ")");
 	}
@@ -54,7 +54,8 @@ public class GameController implements NetworkListener {
 		this.currentTurn = myColor;
 		System.out.println("あなたのターン！");
 		SwingUtilities.invokeLater(() -> gui.showMessage("Your turn! Your color is " + myColor));
-		for (int index : board.getValidCells(myColor).keySet()) {
+		// 自分のターンの場合、駒を置けるマスを表示する
+		for (int index : board.getValidMoves(myColor).keySet()) {
 			int i = index / boardSize;
 			int j = index % boardSize;
 			SwingUtilities.invokeLater(() -> gui.setValidPiece(myColor, i, j));
@@ -70,9 +71,9 @@ public class GameController implements NetworkListener {
 	public void onMoveAccepted(int i, int j) {
 		// 自分または相手が駒を正しく置いたときに呼ばれる
 		System.out.println("手が受理されました: (" + i + ", " + j + ")");
-		resetValidCells(board.getValidCells(myColor).keySet());
-		List<Integer> validCells = board.setPiece(currentTurn, i, j);
-		updateCells(currentTurn, validCells);
+		resetValidMoves(board.getValidMoves(myColor).keySet());
+		List<Integer> changedCells = board.applyMove(currentTurn, i, j);
+		updateCells(currentTurn, changedCells);
 	}
 
 	public void onGameOver(String result, int whiteCount, int blackCount) {
@@ -85,16 +86,16 @@ public class GameController implements NetworkListener {
 		SwingUtilities.invokeLater(() -> gui.showMessage("Network error: " + message));
 	}
 
-	private void resetValidCells(Set<Integer> validCells) {
-		for (int index : validCells) {
+	private void resetValidMoves(Set<Integer> changedCells) {
+		for (int index : changedCells) {
 			int i = index / boardSize;
 			int j = index % boardSize;
 			SwingUtilities.invokeLater(() -> gui.setPiece(Piece.EMPTY, i, j));
 		}
 	}
 
-	private void updateCells(Piece piece, List<Integer> validCells) {
-		for (int index : validCells) {
+	private void updateCells(Piece piece, List<Integer> validMoves) {
+		for (int index : validMoves) {
 			int i = index / boardSize;
 			int j = index % boardSize;
 			SwingUtilities.invokeLater(() -> gui.setPiece(piece, i, j));

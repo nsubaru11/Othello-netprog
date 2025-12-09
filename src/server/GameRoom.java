@@ -3,8 +3,6 @@ package server;
 import common.*;
 import model.*;
 
-import java.util.*;
-
 class GameRoom {
 	private static int roomIdCounter = 0;
 
@@ -42,7 +40,7 @@ class GameRoom {
 
 	public synchronized void processMove(int i, int j) {
 		// オセロを置いて全体に知らせる
-		board.setPiece(currentTurn, i, j);
+		board.applyMove(currentTurn, i, j);
 		broadcastMessage(Protocol.moveAccepted(i, j));
 
 		// ゲーム終了判定
@@ -52,7 +50,7 @@ class GameRoom {
 		currentTurn = currentTurn == Piece.WHITE ? Piece.BLACK : Piece.WHITE;
 
 		// 置けるかどうかチェック
-		if (board.countValidCells(currentTurn) > 0) {
+		if (board.countValidMoves(currentTurn) > 0) {
 			notifyTurnChange(); // 置ける
 		} else {
 			handlePass(); // パス処理
@@ -79,7 +77,7 @@ class GameRoom {
 	}
 
 	private boolean isGameOver() {
-		return board.countValidCells(Piece.WHITE) == 0 && board.countValidCells(Piece.BLACK) == 0;
+		return board.countValidMoves(Piece.WHITE) == 0 && board.countValidMoves(Piece.BLACK) == 0;
 	}
 
 	private void endGame() {
