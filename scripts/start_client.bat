@@ -20,7 +20,7 @@ if exist "%CORRETTO_HOME%\bin\javac.exe" (
 
 for %%i in ("%~dp0..") do set "REPO_DIR=%%~fi"
 set "SRC_DIR=%REPO_DIR%\src"
-set "OUT_DIR=%REPO_DIR%\out\production\Othello-netprog"
+set "OUT_DIR=%REPO_DIR%\out\production\othello-netprog"
 
 echo Compiling...
 if not exist "%OUT_DIR%" mkdir "%OUT_DIR%"
