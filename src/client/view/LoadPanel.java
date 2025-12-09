@@ -1,18 +1,18 @@
 package client.view;
 
-import javax.imageio.*;
 import javax.swing.*;
-import javax.swing.Timer;
 import java.awt.*;
-import java.awt.image.*;
-import java.io.*;
-import java.util.*;
 
 /**
  * ゲーム起動時のロード画面を表示するパネルです。
  * ロード完了後にホーム画面へ遷移します。
  */
 class LoadPanel extends BaseBackgroundPanel {
+	// --------------- クラス定数 ---------------
+	/** タイトルテキスト */
+	private static final String TITLE_TEXT = "Othello Game";
+	/** タイトルフォント */
+	private static final Font TITLE_FONT = new Font("Arial", Font.BOLD, 64);
 	// --------------- フィールド ---------------
 	/** 親GUIへの参照 */
 	private final OthelloGUI gui;
@@ -59,6 +59,30 @@ class LoadPanel extends BaseBackgroundPanel {
 		progress = 0;
 		progressBar.setValue(0);
 		timer.start();
+	}
+
+	@Override
+	protected void paintComponent(final Graphics g) {
+		super.paintComponent(g);
+		int panelWidth = getWidth();
+		int panelHeight = getHeight();
+
+		// 影付き文字を描画
+		Graphics2D g2d = (Graphics2D) g;
+		g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+		g2d.setFont(TITLE_FONT);
+		FontMetrics fm = g2d.getFontMetrics();
+		int textWidth = fm.stringWidth(TITLE_TEXT);
+		int textX = (panelWidth - textWidth) / 2;
+		int textY = panelHeight / 3 - fm.getHeight() / 3 + fm.getAscent() - 50;
+
+		// 影の描画
+		g2d.setColor(new Color(0, 0, 0, 120));
+		g2d.drawString(TITLE_TEXT, textX + 3, textY + 3);
+
+		// 文字の描画
+		g2d.setColor(Color.WHITE);
+		g2d.drawString(TITLE_TEXT, textX, textY);
 	}
 
 	/**

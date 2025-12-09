@@ -99,12 +99,36 @@ class HomePanel extends BaseBackgroundPanel {
 		add(startButton, gbc);
 	}
 
-	/**
-	 * ボタン用の画像を事前生成してキャッシュします。
-	 * パフォーマンス最適化のため、クリックごとの画像生成を回避します。
-	 *
-	 * @param buttonSize ボタンサイズ
-	 */
+	@Override
+	protected void paintComponent(final Graphics g) {
+		super.paintComponent(g);
+		// 影付き文字を描画
+		int panelWidth = getWidth();
+		int panelHeight = getHeight();
+
+		Graphics2D g2d = (Graphics2D) g;
+		g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+		g2d.setFont(TITLE_FONT);
+		FontMetrics fm = g2d.getFontMetrics();
+		int textWidth = fm.stringWidth(TITLE_TEXT);
+		int textX = (panelWidth - textWidth) / 2;
+		int textY = panelHeight / 3 - fm.getHeight() / 3 + fm.getAscent() - 50;
+
+		// 影の描画
+		g2d.setColor(new Color(0, 0, 0, 120));
+		g2d.drawString(TITLE_TEXT, textX + 3, textY + 3);
+
+		// 文字の描画
+		g2d.setColor(Color.WHITE);
+		g2d.drawString(TITLE_TEXT, textX, textY);
+	}
+
+		/**
+		 * ボタン用の画像を事前生成してキャッシュします。
+		 * パフォーマンス最適化のため、クリックごとの画像生成を回避します。
+		 *
+		 * @param buttonSize ボタンサイズ
+		 */
 	private void prepareImages(final int buttonSize) {
 		int pressedSize = (int) (buttonSize * 0.95);
 
