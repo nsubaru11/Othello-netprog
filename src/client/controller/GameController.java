@@ -70,19 +70,9 @@ public class GameController implements NetworkListener {
 	public void onMoveAccepted(int i, int j) {
 		// 自分または相手が駒を正しく置いたときに呼ばれる
 		System.out.println("手が受理されました: (" + i + ", " + j + ")");
-		for (int index : board.getValidCells(myColor).keySet()) {
-			int ni = index / boardSize;
-			int nj = index % boardSize;
-			SwingUtilities.invokeLater(() -> gui.setPiece(Piece.EMPTY, ni, nj));
-		}
-		placePiece(i, j);
-		List<Integer> validCells = board.getValidCells(currentTurn).get(i * boardSize + j);
-		for (int cell : validCells) {
-			int ni = cell / boardSize;
-			int nj = cell % boardSize;
-			placePiece(ni, nj);
-		}
-		board.updateValidMoves();
+		resetValidCells(board.getValidCells(myColor).keySet());
+		List<Integer> validCells = board.setPiece(currentTurn, i, j);
+		updateCells(currentTurn, validCells);
 	}
 
 	public void onGameOver(String result, int whiteCount, int blackCount) {
@@ -95,14 +85,18 @@ public class GameController implements NetworkListener {
 		SwingUtilities.invokeLater(() -> gui.showMessage("Network error: " + message));
 	}
 
-	private void placePiece(int i, int j) {
-		// この代入式を消すとバグる（SwingUtilitiesは処理を後回しにするから、先に通信が終わってcurrentTurnが更新されてしまう。）
-		Piece piece = currentTurn;
-		if (piece.isWhite()) {
-			board.placeWhite(i, j);
-			SwingUtilities.invokeLater(() -> gui.setPiece(piece, i, j));
-		} else {
-			board.placeBlack(i, j);
+	private void resetValidCells(Set<Integer> validCells) {
+		for (int index : validCells) {
+			int i = index / boardSize;
+			int j = index % boardSize;
+			SwingUtilities.invokeLater(() -> gui.setPiece(Piece.EMPTY, i, j));
+		}
+	}
+
+	private void updateCells(Piece piece, List<Integer> validCells) {
+		for (int index : validCells) {
+			int i = index / boardSize;
+			int j = index % boardSize;
 			SwingUtilities.invokeLater(() -> gui.setPiece(piece, i, j));
 		}
 	}

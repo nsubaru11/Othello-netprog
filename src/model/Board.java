@@ -67,10 +67,12 @@ public final class Board {
 					if (board[ni][nj].isWhite()) {
 						if (cannotMove(ni, nj, Piece.BLACK, di, dj)) continue;
 						List<Integer> list = blackValidCells.computeIfAbsent(i * size + j, k -> new ArrayList<>());
+						list.add(i * size + j);
 						addValidCells(ni, nj, di, dj, Piece.WHITE, list);
 					} else if (board[ni][nj].isBlack()) {
 						if (cannotMove(ni, nj, Piece.WHITE, di, dj)) continue;
 						List<Integer> list = whiteValidCells.computeIfAbsent(i * size + j, k -> new ArrayList<>());
+						list.add(i * size + j);
 						addValidCells(ni, nj, di, dj, Piece.BLACK, list);
 					}
 				}
@@ -104,17 +106,16 @@ public final class Board {
 	/**
 	 * playerが座標i, jにコマを置く（この座標は置くことができるという前提）
 	 */
-	public void setPiece(final Piece player, final int i, final int j) {
-		if (player.isWhite()) placeWhite(i, j);
-		else placeBlack(i, j);
-		List<Integer> validCells = player.isWhite() ? whiteValidCells.get(i * size + j) : blackValidCells.get(i * size + j);
-		for (int cell : validCells) {
+	public List<Integer> setPiece(final Piece player, final int i, final int j) {
+		List<Integer> changedCells = player.isWhite() ? whiteValidCells.get(i * size + j) : blackValidCells.get(i * size + j);
+		for (int cell : changedCells) {
 			int ni = cell / size;
 			int nj = cell % size;
 			if (player.isWhite()) placeWhite(ni, nj);
 			else placeBlack(ni, nj);
 		}
 		updateValidMoves();
+		return Collections.unmodifiableList(changedCells);
 	}
 
 	public void placeWhite(final int i, final int j) {
