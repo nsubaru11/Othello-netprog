@@ -6,6 +6,7 @@ import model.*;
  * NetworkControllerとGameControllerが循環参照にならないためのインターフェース
  */
 public interface NetworkListener {
+
 	void onGameStart(Piece assignedColor);
 
 	void onYourTurn();
@@ -15,6 +16,8 @@ public interface NetworkListener {
 	void onMoveAccepted(int i, int j);
 
 	void onGameOver(String result, int whiteCount, int blackCount);
+
+	void onOpponentResigned();
 
 	void onNetworkError(String message);
 }

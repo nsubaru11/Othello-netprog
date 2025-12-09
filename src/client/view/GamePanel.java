@@ -14,7 +14,6 @@ import java.util.*;
 /**
  * オセロゲームのゲーム画面を表示するパネルです。
  * ゲームボードの描画と駒の配置を管理します。
- * TODO: リセットボタンの作成
  */
 class GamePanel extends BaseBackgroundPanel {
 	// --------------- クラス定数 ---------------
@@ -72,6 +71,8 @@ class GamePanel extends BaseBackgroundPanel {
 	private final JButton[][] board;
 	/** リサイズ用のリスナー */
 	private final ComponentListener componentListener;
+	/** ゲーム終了ボタン */
+	private final JButton finishButton;
 	/** タイトルラベル */
 	private final JLabel titleLabel;
 
@@ -104,13 +105,29 @@ class GamePanel extends BaseBackgroundPanel {
 		setBackground(gui.getBackground());
 		GridBagConstraints gbc = new GridBagConstraints();
 
+		// ゲーム終了ボタンの作成（めんどくさいからデフォルトのまま）
+		finishButton = new JButton("finish");
+		finishButton.addActionListener(e -> {
+			int choice = JOptionPane.showConfirmDialog(this,
+					"ゲームを終了（降参）してホームに戻りますか？",
+					"終了確認",
+					JOptionPane.YES_NO_OPTION,
+					JOptionPane.WARNING_MESSAGE);
+			if (choice == JOptionPane.NO_OPTION) return;
+			controller.giveUp();
+		});
+		gbc.gridx = 0;
+		gbc.gridy = 0;
+		gbc.insets = new Insets(10, 10, 10, 10);
+		add(finishButton, gbc);
+
 		// テキストを表示するためのラベル
 		titleLabel = new JLabel("Waiting...", SwingConstants.CENTER);
 		titleLabel.setFont(new Font("Arial", Font.BOLD, 28));
 		titleLabel.setForeground(Color.BLACK);
-		gbc.gridx = 0;
+		gbc.gridx = 1;
 		gbc.gridy = 0;
-		gbc.gridwidth = boardSize;
+		gbc.gridwidth = boardSize - 1;
 		gbc.insets = new Insets(20, 20, 20, 20);
 		add(titleLabel, gbc);
 
@@ -230,6 +247,7 @@ class GamePanel extends BaseBackgroundPanel {
 				for (int j = 0; j < boardSize; j++) {
 					JButton button = board[i][j];
 					button.setPreferredSize(newDim);
+					// 各ボタンにアイコンを設定する
 					String property = (String) button.getClientProperty(Piece.class);
 					switch (property) {
 						case WHITE_MOVE_HINT:

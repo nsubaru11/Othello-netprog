@@ -64,7 +64,8 @@ class ClientHandler extends Thread {
 				break;
 
 			case RESIGN:
-				gameRoom.handleResign(this);
+				if (gameRoom == null) server.disconnectPlayer(this);
+				else gameRoom.handleResign(this);
 				break;
 
 			default:

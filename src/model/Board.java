@@ -72,6 +72,35 @@ public final class Board {
 	}
 
 	/**
+	 * 指定されたプレイヤー（色）が置くことのできるコマ数を返します。
+	 */
+	public int countValidMoves(final Piece player) {
+		return player.isWhite() ? whiteValidMoves.size() : blackValidMoves.size();
+	}
+
+	/**
+	 * 指定されたプレイヤーが座標i, jにコマを置き、ボードの状態を更新します（この座標は置くことができるという前提）
+	 */
+	public List<Integer> applyMove(final Piece player, final int i, final int j) {
+		List<Integer> changedCells = player.isWhite() ? whiteValidMoves.get(i * size + j) : blackValidMoves.get(i * size + j);
+		for (int cell : changedCells) {
+			int ni = cell / size;
+			int nj = cell % size;
+			if (player.isWhite()) placeWhite(ni, nj);
+			else placeBlack(ni, nj);
+		}
+		updateValidMoves();
+		return Collections.unmodifiableList(changedCells);
+	}
+
+	/**
+	 * 指定された座標が、有効な手（ルール上置ける場所）かどうかを判定します。
+	 */
+	public boolean isValidMove(Piece player, int i, int j) {
+		return getValidMoves(player).get(i * size + j) != null;
+	}
+
+	/**
 	 * 現在の盤面状態に基づいて、{@code whiteValidMoves} および {@code blackValidMoves} を更新します。
 	 */
 	private void updateValidMoves() {
@@ -125,32 +154,10 @@ public final class Board {
 	}
 
 	/**
-	 * 指定されたプレイヤー（色）が置くことのできるコマ数を返します。
-	 */
-	public int countValidMoves(final Piece player) {
-		return player.isWhite() ? whiteValidMoves.size() : blackValidMoves.size();
-	}
-
-	/**
-	 * 指定されたプレイヤーが座標i, jにコマを置き、ボードの状態を更新します（この座標は置くことができるという前提）
-	 */
-	public List<Integer> applyMove(final Piece player, final int i, final int j) {
-		List<Integer> changedCells = player.isWhite() ? whiteValidMoves.get(i * size + j) : blackValidMoves.get(i * size + j);
-		for (int cell : changedCells) {
-			int ni = cell / size;
-			int nj = cell % size;
-			if (player.isWhite()) placeWhite(ni, nj);
-			else placeBlack(ni, nj);
-		}
-		updateValidMoves();
-		return Collections.unmodifiableList(changedCells);
-	}
-
-	/**
 	 * 指定座標に白石を置きます。
 	 * もし黒石があれば白石に変わり、カウントを更新します。
 	 */
-	public void placeWhite(final int i, final int j) {
+	private void placeWhite(final int i, final int j) {
 		if (board[i][j].isBlack()) blackCount--;
 		whiteCount++;
 		board[i][j] = Piece.WHITE;
@@ -160,17 +167,10 @@ public final class Board {
 	 * 指定座標に黒石を置きます。
 	 * もし白石があれば黒石に変わり、カウントを更新します。
 	 */
-	public void placeBlack(final int i, final int j) {
+	private void placeBlack(final int i, final int j) {
 		if (board[i][j].isWhite()) whiteCount--;
 		blackCount++;
 		board[i][j] = Piece.BLACK;
-	}
-
-	/**
-	 * 指定された座標が、有効な手（ルール上置ける場所）かどうかを判定します。
-	 */
-	public boolean isValidMove(Piece player, int i, int j) {
-		return getValidMoves(player).get(i * size + j) != null;
 	}
 
 	/**

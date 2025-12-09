@@ -8,7 +8,6 @@ import java.net.*;
 
 /**
  * 通信を管理するクラスです。
- * TODO: Javadocコメントを付与する。
  */
 class NetworkController {
 	private static final int DEFAULT_PORT = 10000;
@@ -47,6 +46,7 @@ class NetworkController {
 	public void sendResign() {
 		out.println(Protocol.resign());
 		out.flush();
+		disconnect();
 	}
 
 	public void disconnect() {
@@ -88,6 +88,12 @@ class NetworkController {
 				int whiteCount = Integer.parseInt(tokens[2]);
 				int blackCount = Integer.parseInt(tokens[3]);
 				networkListener.onGameOver(tokens[1], whiteCount, blackCount);
+				disconnect();
+				break;
+
+			case OPPONENT_RESIGNED:
+				networkListener.onOpponentResigned();
+				disconnect();
 				break;
 
 			case ERROR:
