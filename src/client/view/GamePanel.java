@@ -5,6 +5,7 @@ import model.*;
 
 import javax.imageio.*;
 import javax.swing.*;
+import javax.swing.Timer;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.image.*;
@@ -74,9 +75,14 @@ class GamePanel extends BaseBackgroundPanel {
 	private final ComponentListener componentListener;
 	/** タイトルラベル */
 	private final JLabel titleLabel;
+	/** リサイズ完了検知用のタイマー */
+	private final Timer resizeTimer;
 
 	/** 現在のセルサイズ */
 	private int cellSize;
+	/** 現在の画像スケールモード（SCALE_FAST or SCALE_SMOOTH） */
+	private int currentScaleMode = Image.SCALE_SMOOTH;
+
 	/** 白駒のアイコン */
 	private ImageIcon whiteStoneIcon;
 	/** 黒駒のアイコン */
@@ -131,16 +137,25 @@ class GamePanel extends BaseBackgroundPanel {
 			}
 		}
 
+		// リサイズ終了検知用タイマーの初期化 (300ms後に高画質化を実行)
+		resizeTimer = new Timer(300, e -> {
+			resizeBoard(Image.SCALE_SMOOTH);
+			((Timer) e.getSource()).stop();
+		});
+		resizeTimer.setRepeats(false);
+
 		// リスナーの作成
 		componentListener = new ComponentAdapter() {
 			@Override
 			public void componentResized(ComponentEvent e) {
-				resizeBoard();
+				// リサイズ中はタイマーをリセットし、低画質で高速描画
+				resizeTimer.restart();
+				resizeBoard(Image.SCALE_FAST);
 			}
 		};
 		addComponentListener(componentListener);
 
-		resizeBoard();
+		resizeBoard(Image.SCALE_SMOOTH);
 		int half = boardSize / 2;
 		setPiece(Piece.WHITE, half - 1, half - 1);
 		setPiece(Piece.BLACK, half - 1, half);
@@ -164,6 +179,7 @@ class GamePanel extends BaseBackgroundPanel {
 	public void removeNotify() {
 		super.removeNotify();
 		removeComponentListener(componentListener);
+		if (resizeTimer.isRunning()) resizeTimer.stop();
 	}
 
 	/**
@@ -210,8 +226,10 @@ class GamePanel extends BaseBackgroundPanel {
 
 	/**
 	 * ボードのサイズを現在のパネルサイズに合わせて調整します。
+	 *
+	 * @param scaleMode 画像のリサイズモード (Image.SCALE_FAST or Image.SCALE_SMOOTH)
 	 */
-	private void resizeBoard() {
+	private void resizeBoard(final int scaleMode) {
 		int width = getWidth(), height = getHeight();
 
 		// パネルが表示されていない、またはサイズが小さすぎる場合は何もしない
@@ -220,10 +238,11 @@ class GamePanel extends BaseBackgroundPanel {
 		// 新しいセルサイズを計算（余白を考慮）
 		int newCellSize = Math.min(width / (boardSize + 1), height / (boardSize + 1));
 
-		// サイズが変更された場合のみ更新
-		if (newCellSize > 0 && newCellSize != cellSize) {
+		// サイズが変更された場合、または画質モードを高画質に切り替える場合に更新
+		if (newCellSize > 0 && (newCellSize != cellSize || scaleMode != currentScaleMode)) {
 			cellSize = newCellSize;
-			prepareImages(cellSize);
+			currentScaleMode = scaleMode;
+			prepareImages(cellSize, scaleMode);
 			Dimension newDim = new Dimension(cellSize, cellSize);
 
 			for (int i = 0; i < boardSize; i++) {
@@ -263,13 +282,14 @@ class GamePanel extends BaseBackgroundPanel {
 	 * パフォーマンス最適化のため、クリックごとの画像生成を回避します。
 	 *
 	 * @param cellSize ボタンサイズ
+	 * @param scaleMode リサイズモード
 	 */
-	private void prepareImages(final int cellSize) {
-		whiteStoneIcon = new ImageIcon(WHITE_STONE_IMAGE.getScaledInstance(cellSize, cellSize, Image.SCALE_SMOOTH));
-		whiteMoveHintIcon = new ImageIcon(WHITE_MOVE_HINT_IMAGE.getScaledInstance(cellSize, cellSize, Image.SCALE_SMOOTH));
-		blackStoneIcon = new ImageIcon(BLACK_STONE_IMAGE.getScaledInstance(cellSize, cellSize, Image.SCALE_SMOOTH));
-		blackMoveHintIcon = new ImageIcon(BLACK_MOVE_HINT_IMAGE.getScaledInstance(cellSize, cellSize, Image.SCALE_SMOOTH));
-		emptyCellIcon = new ImageIcon(EMPTY_CELL_IMAGE.getScaledInstance(cellSize, cellSize, Image.SCALE_SMOOTH));
+	private void prepareImages(final int cellSize, final int scaleMode) {
+		whiteStoneIcon = new ImageIcon(WHITE_STONE_IMAGE.getScaledInstance(cellSize, cellSize, scaleMode));
+		whiteMoveHintIcon = new ImageIcon(WHITE_MOVE_HINT_IMAGE.getScaledInstance(cellSize, cellSize, scaleMode));
+		blackStoneIcon = new ImageIcon(BLACK_STONE_IMAGE.getScaledInstance(cellSize, cellSize, scaleMode));
+		blackMoveHintIcon = new ImageIcon(BLACK_MOVE_HINT_IMAGE.getScaledInstance(cellSize, cellSize, scaleMode));
+		emptyCellIcon = new ImageIcon(EMPTY_CELL_IMAGE.getScaledInstance(cellSize, cellSize, scaleMode));
 	}
 
 	/**
