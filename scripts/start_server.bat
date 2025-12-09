@@ -2,16 +2,32 @@
 chcp 65001 > nul
 echo Starting Othello Server...
 
-set JAVA_HOME=C:\Program Files\Amazon Corretto\jdk1.8.0_472
-set PATH=%JAVA_HOME%\bin;%PATH%
-for %%i in ("%~dp0..") do set REPO_DIR=%%~fi
-set SRC_DIR=%REPO_DIR%\src
-set OUT_DIR=%REPO_DIR%\out\production\Othello-netprog
+rem パスをクォート付きで保持
+set "CORRETTO_HOME=C:\Program Files\Amazon Corretto\jdk1.8.0_472"
+
+rem Corretto の存在チェック
+if exist "%CORRETTO_HOME%\bin\javac.exe" (
+    echo Using bundled JDK: %CORRETTO_HOME%
+    set "JAVA_HOME=%CORRETTO_HOME%"
+    set "PATH=%JAVA_HOME%\bin;%PATH%"
+    set "JAVAC_CMD=%JAVA_HOME%\bin\javac"
+    set "JAVA_CMD=%JAVA_HOME%\bin\java"
+) else (
+    echo Bundled JDK not found. Using system default Java.
+    set "JAVAC_CMD=javac"
+    set "JAVA_CMD=java"
+)
+
+for %%i in ("%~dp0..") do set "REPO_DIR=%%~fi"
+set "SRC_DIR=%REPO_DIR%\src"
+set "OUT_DIR=%REPO_DIR%\out\production\Othello-netprog"
 
 echo Compiling...
 if not exist "%OUT_DIR%" mkdir "%OUT_DIR%"
+
 dir /s /b "%SRC_DIR%\model\*.java" "%SRC_DIR%\common\*.java" "%SRC_DIR%\server\*.java" > "%REPO_DIR%\sources.txt"
-"%JAVA_HOME%\bin\javac" -encoding UTF-8 -d "%OUT_DIR%" @"%REPO_DIR%\sources.txt"
+
+"%JAVAC_CMD%" -encoding UTF-8 -d "%OUT_DIR%" @"%REPO_DIR%\sources.txt"
 del "%REPO_DIR%\sources.txt"
 
 if %ERRORLEVEL% neq 0 (
@@ -23,6 +39,6 @@ if %ERRORLEVEL% neq 0 (
 echo Compilation successful!
 echo.
 echo Starting server...
-"%JAVA_HOME%\bin\java" -cp "%OUT_DIR%" server.OthelloServer
+"%JAVA_CMD%" -cp "%OUT_DIR%" server.OthelloServer
 
 pause
